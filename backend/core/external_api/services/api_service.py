@@ -1,7 +1,7 @@
 from abc import ABC,abstractmethod
 import configparser
 import os
-class APICLIENT(ABC):
+class ApiService(ABC):
     def __init__(self) -> None:
         super().__init__()
         config = configparser.ConfigParser()
