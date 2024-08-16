@@ -149,14 +149,22 @@ class DBConnection:
         return data
     
     def update_portfolio(self, portfolio_id: str, portfolio: Portfolio):
+        data = portfolio.to_dict()
+
         collection_ref = self._db.collection(self.portfolio_collection_name)
         doc_ref = collection_ref.document(portfolio_id)
-        doc_ref.update(portfolio.to_dict())
+        doc_ref.update(data)
+        data['id'] = doc_ref.id
+        return data
 
     def update_transaction(self, transaction_id: str, transaction: Transaction):
+        data = transaction.to_dict()
+        
         collection_ref = self._db.collection(self.transaction_collection_name)
         doc_ref = collection_ref.document(transaction_id)
-        doc_ref.update(transaction)
+        doc_ref.update(data)
+        data['id'] = doc_ref.id
+        return data
     
     def get_user_portfolio(self, user_id: str):
         doc_ref = self._db.collection(self.portfolio_collection_name)
