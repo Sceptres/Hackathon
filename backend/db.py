@@ -56,9 +56,9 @@ class TransactionStatus(Enum):
 
     @staticmethod
     def from_value(value):
-        if value == TransactionStatus.OPEN.value:
+        if value == 'OPEN':
             return TransactionStatus.OPEN
-        elif value == TransactionStatus.CLOSED.value:
+        elif value == 'CLOSED':
             return TransactionStatus.CLOSED
         else:
             raise Exception('Transaction status can only be OPEN or CLOSED') 
@@ -89,7 +89,7 @@ class Transaction:
 
     @staticmethod
     def from_dict(dict: dict):
-        user_id = dict['userID']
+        user_id = dict['userId']
         portfolio_id = dict['portfolioId']
         stock_symbol = dict['stockSymbol']
         quantity = dict['quantity']
