@@ -4,6 +4,9 @@ import Login from "./components/auth/login";
 import Register from "./components/auth/register";
 import Header from "./components/header";
 import Home from "./components/home";
+import Game from "./components/game/game";
+import EndGame from "./components/game/endGame";
+import Guide from "./components/guide/guide";
 import { AuthProvider } from "./contexts/authContext";
 
 function AppRoutes() {
@@ -24,6 +27,18 @@ function AppRoutes() {
       path: "/home",
       element: <Home />,
     },
+    {
+      path: "/game",
+      element: <Game />
+    },
+    {
+      path: "/endgame",
+      element: <EndGame />
+    },
+    {
+      path: "/guide",
+      element: <Guide />
+    }
   ];
   return useRoutes(routesArray);
 }

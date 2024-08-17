@@ -9,6 +9,14 @@ const Home = () => {
     const { currentUser,userLoggedIn } = useAuth()
     return (
         <div className='text-2xl font-bold pt-14'>
+            <button onClick={() => {navigate('/game')}}
+                className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
+                Start Game
+            </button>
+            <button onClick={() => {navigate('/guide')}}
+                className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
+                Read the Investment Guide!
+            </button>
                             <button 
                     onClick={() => { 
                         doSignOut().then(() => { 
