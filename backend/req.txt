@@ -1,3 +1,5 @@
 flask
 firebase-admin
 Flask-Cors
+aiohttp
+yfinance
