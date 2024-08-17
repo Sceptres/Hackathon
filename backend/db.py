@@ -275,7 +275,7 @@ class DBConnection:
     def get_user(self, user_id: str):
         doc_ref = self._db.collection(self.user_collection_name).document(user_id)
         user = doc_ref.get()
-        if(user.exists()):
+        if(user.exists):
             user_data = user.to_dict()
             user_data['id'] = doc_ref.id
             return user_data
