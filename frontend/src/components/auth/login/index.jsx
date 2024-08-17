@@ -20,13 +20,58 @@ const Login = () => {
         }
     }
 
-    const onGoogleSignIn = (e) => {
+    const addToLeaderBoard = async(userId) => {
+
+        try {
+            const response = await fetch('http://127.0.0.1:8001/core/user/insert', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',             
+              },
+              body: JSON.stringify({
+                highscore: 0,
+                id: userId
+            }),
+            });
+            const data = await response.json();
+            console.log(data);
+          } catch (error) {
+            console.error('Error:', error);
+          }
+      }
+
+    const checkIfInLeaderBoard = async(userId) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8001/core/user/get', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',             
+              },
+              body: JSON.stringify({
+                id: "userId"
+            }),
+            });
+            if (response.status === 500){
+                console.log("false")
+                return false;
+            }
+            console.log("true")
+            return true;
+          } catch (error) {
+            console.error('Error:', error);
+          }
+      }
+
+    const onGoogleSignIn = async (e) => {
+        var id = null;
         e.preventDefault()
         if (!isSigningIn) {
             setIsSigningIn(true)
-            doSignInWithGoogle().catch(err => {
-                setIsSigningIn(false)
-            })
+            id = await doSignInWithGoogle()
+        }
+        const data = checkIfInLeaderBoard(id)
+        if(! checkIfInLeaderBoard(id)){
+            addToLeaderBoard(id)
         }
     }
 
