@@ -14,7 +14,6 @@ def index():
 
 @core_blueprint.route('/user/insert', methods=['POST'])
 def insert_user():
-    print("WASSSSSSSSSSSSUUUUUUUUUPPPPPPPPPPPPPPPPPPGUYS")
     try:
         request_data = request.get_json()
         user: User = User.from_dict(request_data)
