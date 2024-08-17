@@ -139,8 +139,8 @@ class Transaction:
             quantity: int,
             price_at_buy_transaction: float,
             price_at_sell_transaction: float,
-            transaction_open_date: datetime,
-            transaction_close_date: datetime,
+            transaction_open_date: datetime.datetime,
+            transaction_close_date: datetime.datetime,
             status: TransactionStatus
     ) -> None:
         self.user_id = user_id
