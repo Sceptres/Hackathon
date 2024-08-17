@@ -21,7 +21,7 @@ const Login = () => {
     }
 
     const addToLeaderBoard = async(userId) => {
-
+        console.log(userId)
         try {
             const response = await fetch('http://127.0.0.1:8001/core/user/insert', {
               method: 'POST',
@@ -48,11 +48,12 @@ const Login = () => {
                 'Content-Type': 'application/json',             
               },
               body: JSON.stringify({
-                id: "userId"
+                id: userId
             }),
             });
-            if (response.status === 500){
-                console.log("false")
+            const data = await response.json();
+            if (Object.keys(data).length === 0){
+                console.log("no keys")
                 return false;
             }
             console.log("true")
@@ -69,8 +70,9 @@ const Login = () => {
             setIsSigningIn(true)
             id = await doSignInWithGoogle()
         }
-        const data = checkIfInLeaderBoard(id)
-        if(! checkIfInLeaderBoard(id)){
+        var boolean = await checkIfInLeaderBoard(id)
+        if(boolean == false){
+            console.log("reached here")
             addToLeaderBoard(id)
         }
     }

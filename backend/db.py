@@ -139,8 +139,8 @@ class Transaction:
             quantity: int,
             price_at_buy_transaction: float,
             price_at_sell_transaction: float,
-            transaction_open_date: datetime,
-            transaction_close_date: datetime,
+            transaction_open_date: datetime.datetime,
+            transaction_close_date: datetime.datetime,
             status: TransactionStatus
     ) -> None:
         self.user_id = user_id
@@ -275,7 +275,7 @@ class DBConnection:
     def get_user(self, user_id: str):
         doc_ref = self._db.collection(self.user_collection_name).document(user_id)
         user = doc_ref.get()
-        if(user.exists()):
+        if(user.exists):
             user_data = user.to_dict()
             user_data['id'] = doc_ref.id
             return user_data
