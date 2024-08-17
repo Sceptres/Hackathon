@@ -32,7 +32,6 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
         <div className="w-full h-screen flex flex-col">
           <AppRoutes />
         </div>

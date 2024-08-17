@@ -31,7 +31,7 @@ export const PortfolioFactory = (userId, balance, netProfit, totalProfit, totalL
  * @param {number} priceAtSellTransaction A decimal number representing the price of the stock/cryptocurrency when sold
  * @param {Timestamp} transactionOpenDate A timestamp showing when the transaction was opened
  * @param {Timestamp} transactionCloseDate A timestamp showing when the transaction was closed
- * @param {Timestamp} status The status of the transaction from the TransactionStatus object.
+ * @param {string} status The status of the transaction from the TransactionStatus object.
  * @returns A new Transaction document to be stored in the firestore database
  */
 export const TransactionFactory = (
