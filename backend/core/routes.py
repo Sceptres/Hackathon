@@ -17,13 +17,9 @@ def insert_user():
     print("WASSSSSSSSSSSSUUUUUUUUUPPPPPPPPPPPPPPPPPPGUYS")
     try:
         request_data = request.get_json()
-        print(request_data)
         user: User = User.from_dict(request_data)
-        print(user)
         created_user = db_connection.insert_user(user)
-        print(created_user)
         response = jsonify(created_user)
-        print(response)
         response.status_code = 200
         return response
     except Exception as e:
