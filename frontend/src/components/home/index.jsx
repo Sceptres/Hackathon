@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
@@ -9,6 +9,42 @@ import './home.css'
 const Home = () => {
     const navigate = useNavigate();
     const { userLoggedIn } = useAuth();
+    const { currentUser } = useAuth();
+
+    const [isRunningGame, setIsRunningGame] = useState(null); // To store fetched data
+
+    useEffect(() => {
+        const fetchData = async () => {
+
+            try {
+                console.log("trying out useEffect")
+                console.log(currentUser.uid)
+                const response = await fetch('http://127.0.0.1:8001/core/user/game/getActive', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',             
+                  },
+                  body: JSON.stringify({
+                    "userId": currentUser.uid
+                }),
+                });
+                const data = await response.json();
+                console.log(data);
+                if(Object.keys(data).length === 0){
+                    setIsRunningGame(false)
+                }
+                else{
+                    setIsRunningGame(true)
+                }
+                console.log("here")
+              } catch (error) {
+                console.error('Error:', error);
+              }
+            
+          };
+      
+          fetchData();} , []);
+    
 
     const logoutUser = () => {
         doSignOut().then(() => {
