@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
-import avatar from './avatar.png'
+import avatar from '../../avatar.png'
 import './home.css'
 
 
