@@ -184,6 +184,21 @@ def get_user_games():
         response = jsonify(str(e))
         response.status_code = 500
         return response
+
+@core_blueprint.route('/user/game/getActive', methods=['POST'])
+def get_user_active_games():
+    try:
+        request_data = request.get_json()
+        user_id = request_data['userId']
+        games = db_connection.get_user_active_games(user_id)
+
+        response = jsonify(games)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        response = jsonify(str(e))
+        response.status_code = 500
+        return response        
     
 @core_blueprint.route('/game/portfolio/get', methods=['POST'])
 def get_game_portfolio():
