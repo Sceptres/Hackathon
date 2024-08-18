@@ -10,7 +10,7 @@ const Game = () => {
         <div>
             Game Text
             <div>
-                <button onClick={() => {navigate('/endgame')}}>
+                <button onClick={() => {navigate('/endgame', {gameId: 'game id goes here'})}}>
                 End Game
             </button>
             </div>
