@@ -1,5 +1,6 @@
 from firebase_admin import credentials, initialize_app, firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
+from auth import get_user_data
 from enum import Enum
 import datetime
 import os
@@ -291,6 +292,9 @@ class DBConnection:
         for doc in query_stream:
             doc_dict = doc.to_dict()
             doc_dict['id'] = doc.id
+
+            user = get_user_data(doc_dict['id'])
+            doc_dict['displayName'] = user.display_name if hasattr(user, 'display_name') and user.display_name else user.email
             leaderboard.append(doc_dict)
 
         return leaderboard
