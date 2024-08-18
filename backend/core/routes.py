@@ -1,8 +1,6 @@
 from core import core_blueprint, db_connection
-from db import Portfolio, Transaction, User, Game, TransactionStatus
+from db import Portfolio, User, Game
 from flask import jsonify, request
-from datetime import datetime
-from werkzeug import Response
 
 @core_blueprint.route('/')
 def index():
@@ -58,22 +56,6 @@ def insert_portfolio():
         response.status_code = 500
         return response
     
-@core_blueprint.route('/transaction/insert', methods=['POST'])
-def insert_transaction():
-    try:
-        request_data = request.get_json()
-        transaction: Transaction = Transaction.from_dict(request_data)
-        created_transaction = db_connection.insert_transaction(transaction)
-
-        response = jsonify(created_transaction)
-        response.status_code = 200
-        
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
 @core_blueprint.route('user/update', methods=['POST'])
 def update_user():
     try:
@@ -116,23 +98,6 @@ def update_portfolio():
         updated_portfolio = db_connection.update_portfolio(portfolio_id, portfolio)
 
         response = jsonify(updated_portfolio)
-        response.status_code = 200
-
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
-@core_blueprint.route('/transaction/update', methods=['POST'])
-def update_transaction():
-    try:
-        request_data = request.get_json()
-        transaction_id = request_data['id']
-        transaction: Transaction = Transaction.from_dict(request_data)
-        updated_transaction = db_connection.update_transaction(transaction_id, transaction)
-
-        response = jsonify(updated_transaction)
         response.status_code = 200
 
         return response
@@ -229,49 +194,3 @@ def get_user_portfolios():
         response = jsonify(str(e))
         response.status_code = 500
         return response
-    
-@core_blueprint.route('/game/transaction/get', methods=['POST'])
-def get_game_transactions():
-    try:
-        request_data = request.get_json()
-        game_id = request_data['gameId']
-        transactions = db_connection.get_game_transactions(game_id)
-
-        response = jsonify(transactions)
-        response.status_code = 200
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-
-@core_blueprint.route('/user/transaction/get', methods=['POST'])
-def get_user_transactions():
-    try:
-        request_data = request.get_json()
-        user_id = request_data['userId']
-        portfolio = db_connection.get_user_transactions(user_id)
-
-        response = jsonify(portfolio)
-        response.status_code = 200
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
-@core_blueprint.route('/portfolio/transaction/get', methods=['POST'])
-def get_portfolio_transactions():
-    try:
-        request_data = request.get_json()
-        portfolio_id = request_data['portfolioId']
-        portfolio = db_connection.get_portfolio_transactions(portfolio_id)
-
-        response = jsonify(portfolio)
-        response.status_code = 200
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
