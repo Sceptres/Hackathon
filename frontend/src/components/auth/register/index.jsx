@@ -15,7 +15,7 @@ const Register = () => {
   const { userLoggedIn } = useAuth();
 
   const addToLeaderBoard = async(userId) => {
-    const initialize = {id: userId, highscore:0}
+
     try {
         const response = await fetch('http://127.0.0.1:8001/core/user/insert', {
           method: 'POST',
@@ -23,8 +23,8 @@ const Register = () => {
             'Content-Type': 'application/json',             
           },
           body: JSON.stringify({
-            highscore: 10000,
-            id: "nQwD1pyTh5XHD4JRAPBIGqYS85E3"
+            highscore: 0,
+            id: userId
         }),
         });
         const data = await response.json();
