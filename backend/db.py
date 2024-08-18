@@ -1,5 +1,6 @@
 from firebase_admin import credentials, initialize_app, firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
+from auth import get_user_data
 from enum import Enum
 import datetime
 import os
@@ -275,7 +276,7 @@ class DBConnection:
     def get_user(self, user_id: str):
         doc_ref = self._db.collection(self.user_collection_name).document(user_id)
         user = doc_ref.get()
-        if(user.exists()):
+        if(user.exists):
             user_data = user.to_dict()
             user_data['id'] = doc_ref.id
             return user_data
@@ -291,6 +292,9 @@ class DBConnection:
         for doc in query_stream:
             doc_dict = doc.to_dict()
             doc_dict['id'] = doc.id
+
+            user = get_user_data(doc_dict['id'])
+            doc_dict['displayName'] = user.display_name if hasattr(user, 'display_name') and user.display_name else user.email
             leaderboard.append(doc_dict)
 
         return leaderboard
@@ -307,6 +311,19 @@ class DBConnection:
             games.append(doc_dict)
 
         return games
+
+    def get_user_active_games(self, user_id: str):
+        doc_ref = self._db.collection(self.game_collection_name)
+        query = doc_ref.where(filter=FieldFilter('userId', '==', user_id)).where(filter=FieldFilter('status', '==', 'ACTIVE'))
+        game_stream = query.stream()
+        
+        games = []
+        for doc in game_stream:
+            doc_dict = doc.to_dict()
+            doc_dict['id'] = doc.id
+            games.append(doc_dict)
+
+        return games    
     
     def get_game_portfolio(self, game_id: str):
         doc_ref = self._db.collection(self.portfolio_collection_name)

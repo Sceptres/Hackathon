@@ -23,3 +23,5 @@
 /frontend/yarn-error.log*
 
 /backend/key.json
+/backend/__pycache__
+/backend/core/__pycache__
