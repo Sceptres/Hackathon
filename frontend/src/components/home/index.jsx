@@ -158,11 +158,6 @@ const Home = () => {
                             )
                         }
                     </ul>
-                    <div className="mt-4 flex justify-center">
-                        <button className="text-white bg-blue-600 px-6 py-2 rounded hover:bg-blue-500 transition duration-300">
-                            Start Game
-                        </button>
-                    </div>
                 </div>
             </div>
         );
