@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import avatar from './avatar.png'
 import './home.css'
 
@@ -16,29 +16,29 @@ const Home = () => {
         });
     };
 
-    const getLeaderboard = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:8001/core/leaderboard/get', {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',             
-                },
-            });
-            const data = await response.json();
-            console.log(data)
-            return data
-        } catch(error) {
-            console.log('Unknown error')
-        }
-    }
+    const [leaderboard, setLeaderboard] = useState([])
 
-    const [leaderboard, setLeaderboard] = useState(() => {
+    useEffect(() => {
+        const getLeaderboard = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8001/core/leaderboard/get', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',             
+                    },
+                });
+                const data = await response.json();
+                return data
+            } catch(error) {
+                console.log('Unknown error')
+            }
+        }
+
         const data = getLeaderboard();
         data.then((arr) => {
             setLeaderboard(arr)
         })
-        return []
-    })
+    }, [])
 
     if(!userLoggedIn) {
         return (
@@ -46,7 +46,7 @@ const Home = () => {
         );
     } else {
         return (
-            <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
+            <div className="flex flex-col items-center justify-center bg-gray-100">
                 <div className='text-2xl font-bold pt-14'>
                     <button onClick={() => {navigate('/game')}}
                         className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
