@@ -1,13 +1,13 @@
-from core.external_api.client_types import ClientTypes
-from core.external_api.clients.stock_api_client import StockAPIClient
-from core.external_api.clients.news_api_client import NewsAPIClient
+from ..api_types import ApiTypes
+from ..services.stock_service import StockApiService
+from ..services.news_service import NewsApiService
 
 class APIServiceFactory:
     @staticmethod
-    def create_api_client(api_type:ClientTypes):
-        if api_type == ClientTypes.Stock:
-            return StockAPIClient()
-        elif api_type == ClientTypes.News:
-            return NewsAPIClient()
+    def create_api_client(api_type:ApiTypes):
+        if api_type == ApiTypes.Stock:
+            return StockApiService()
+        elif api_type == ApiTypes.News:
+            return NewsApiService()
         else:
-            raise Exception(" Wrong Client Type ")
+            raise Exception("Wrong Api Type ")
