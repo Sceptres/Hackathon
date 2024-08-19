@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio } from '../../help'
+import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio } from '../../help/help'
 import StockUI from './stockUI'
 
 /**

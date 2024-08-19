@@ -10,7 +10,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { getDate, dateToStringFormat } from '../../help'
+import { getDate, dateToStringFormat } from '../../help/help'
 
 // Register the necessary chart components
 ChartJS.register(
