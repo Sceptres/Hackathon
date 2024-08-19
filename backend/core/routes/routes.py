@@ -151,11 +151,11 @@ def get_user_games():
         return response
 
 @core_blueprint.route('/user/game/getActive', methods=['POST'])
-def get_user_active_games():
+def get_user_active_game():
     try:
         request_data = request.get_json()
         user_id = request_data['userId']
-        games = db_connection.get_user_active_games(user_id)
+        games = db_connection.get_user_active_game(user_id)
 
         response = jsonify(games)
         response.status_code = 200
