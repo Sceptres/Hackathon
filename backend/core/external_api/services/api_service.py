@@ -11,6 +11,6 @@ class ApiService(ABC):
         print("error")
         print(config.sections())
         env = os.getenv('FLASK_DEBUG','develop')
-        self.api_key = "XGSXOW4UPLENOG28"#config[env]['API_KEY']
+        self.api_key = config[env]['API_KEY']
         
    

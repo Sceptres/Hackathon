@@ -1,8 +1,5 @@
-from core import external_api_blueprint, db_connection
-from db import Portfolio, Transaction, User, Game, TransactionStatus
+from core import external_api_blueprint
 from flask import jsonify, request
-from datetime import datetime
-from werkzeug import Response
 
 from ..external_api.factory.api_service_factory import APIServiceFactory
 
