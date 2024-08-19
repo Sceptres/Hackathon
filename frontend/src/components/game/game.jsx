@@ -4,6 +4,46 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import StockUI from './stockUI'
 import { getDate, dateToStringFormat } from '../../help'
 
+/**
+ * 
+ * @param {object} props The props of this component 
+ * @returns A popup view for the buy/sell buttons
+ */
+const Popup = (props) => {
+    const [sliderValue, setSliderValue] = useState(0);
+  
+    return (
+        <>
+            <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                onClick={props.onClose}></div>
+
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative pt-12">
+                    <h2 className="text-xl font-semibold mb-4 text-center">{props.title}</h2>
+
+                    <input
+                        type="range"
+                        min={props.minValue}
+                        max={props.maxValue}
+                        value={sliderValue || props.startValue}
+                        onChange={(e) => setSliderValue(e.target.value)}
+                        className="w-full"
+                    />
+
+                    <p className="mt-2 text-center">Value: ${sliderValue}</p>
+
+                    <button
+                        onClick={props.onClose}
+                        className={`mt-4 w-full py-2 ${props.buttonClass}`}
+                    >
+                        {props.buttonName}
+                    </button>
+                </div>
+            </div>
+        </>
+    );
+  };
 
 const Game = () => {
     const navigate = useNavigate()
@@ -15,7 +55,6 @@ const Game = () => {
     const [seletedDate, setSeletedDate] = useState(defaultDate);
 
 
-
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -24,8 +63,6 @@ const Game = () => {
         const value = e.target.value;
         setSearchTerm(value);
     };
-
-
 
     const onSearchApi = async (e) => {
         e.preventDefault();
@@ -71,6 +108,25 @@ const Game = () => {
         setShowDropdown(false);
         setSelectedOption(option)
     };
+
+    const [isBuyPopupOpen, setIsBuyPopupOpen] = useState(false);
+    const [isSellPopupOpen, setIsSellPopupOpen] = useState(false);
+
+    const toggleBuyPopup = () => {
+        setIsBuyPopupOpen(!isBuyPopupOpen);
+    }
+
+    const toggleSellPopup = () => {
+        setIsSellPopupOpen(!isSellPopupOpen);
+    }
+
+    const onBuyClick = () => {
+        toggleBuyPopup();
+    }
+
+    const onSellClick = () => {
+        toggleSellPopup();
+    }
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100">
@@ -129,17 +185,19 @@ const Game = () => {
 
                     <div className="flex justify-center space-x-4 mt-4">
                         <button
-                            onClick={() => console.log('Sell button clicked')}
+                            onClick={onSellClick}
                             className="w-1/3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                         >
                             Sell
                         </button>
+                        {isSellPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Sell'} buttonClass={'bg-red-500 text-white rounded-lg hover:bg-red-600'} onClose={toggleSellPopup} />}
                         <button
-                            onClick={() => console.log('Buy button clicked')}
+                            onClick={onBuyClick}
                             className="w-1/3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                         >
                             Buy
                         </button>
+                        {isBuyPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={toggleBuyPopup} />}
                     </div>
 
 
