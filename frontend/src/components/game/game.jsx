@@ -113,6 +113,22 @@ const Game = () => {
 
                     <StockUI ticker={selectedOption} date={seletedDate} defaultDate={defaultDate}></StockUI>
 
+                    <div className="flex justify-center space-x-4 mt-4">
+                        <button
+                            onClick={() => console.log('Sell button clicked')}
+                            className="w-1/3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        >
+                            Sell
+                        </button>
+                        <button
+                            onClick={() => console.log('Buy button clicked')}
+                            className="w-1/3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                        >
+                            Buy
+                        </button>
+                    </div>
+
+
                 </ul>
 
             </div>
