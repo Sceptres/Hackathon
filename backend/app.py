@@ -1,8 +1,9 @@
 from flask import Flask
 from core import core_blueprint
+from core import external_api_blueprint
+
 import os
 from flask_cors import CORS 
-
 
 
 if __name__ == '__main__':
@@ -12,5 +13,8 @@ if __name__ == '__main__':
 
     #Registering routes
     app.register_blueprint(core_blueprint,url_prefix="/core")
+    app.register_blueprint(external_api_blueprint,url_prefix="/external_api")
+
+
 
     app.run(host='0.0.0.0',port=8001,debug=True)
