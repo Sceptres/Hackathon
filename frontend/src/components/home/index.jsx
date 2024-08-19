@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
+import { getDate, dateToStringFormat, getUserActiveGame, createUserGame } from '../../help/help';
 import avatar from './avatar.png'
 import './home.css'
 
@@ -18,77 +19,58 @@ const Home = () => {
 
     const [isRunningGame, setIsRunningGame] = useState(null); // To store fetched data
 
-    const startDate = new Date(2005, 0, 1);
+    let startDate = getDate("2005-10-10");
+    startDate = dateToStringFormat(startDate);
 
     const start_game = async() => {
-        navigate('/game');
-
-
         try {
-            //console.log("trying out useEffect")
-            //console.log(currentUser.uid)
-            const response = await fetch('http://127.0.0.1:8001/core/game/insert', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',             
-              },
-              body: JSON.stringify({
-                "userId": currentUser.uid,
-                "status": "ACTIVE",
-                "score": 0,
-                "currentDate": startDate
-            }),
-            });
-            const data = await response.json();
-            console.log("entered")
-            //console.log(data);
+            const data = await createUserGame(currentUser.uid, startDate);
+            
             if(Object.keys(data).length === 0){
                 setIsRunningGame(false)
             }
             else{
                 setIsRunningGame(true)
             }
-            //console.log("here")
+            navigate('/game', {replace: true});
           } catch (error) {
             console.error('Error:', error);
           }
-
-
-
     }
+
+    const continueGameOnClick = async () => {
+        try {
+            const data = await getUserActiveGame(currentUser.uid);
+
+            if(Object.keys(data).length === 0){
+                setIsRunningGame(false)
+            } else{
+                setIsRunningGame(true)
+            }
+
+            navigate('/game', {replace: true});
+        } catch(error) {
+            console.error('Error:', error);
+        }   
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-
             try {
-                //console.log("trying out useEffect")
-                //console.log(currentUser.uid)
-                const response = await fetch('http://127.0.0.1:8001/core/user/game/getActive', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',             
-                  },
-                  body: JSON.stringify({
-                    "userId": currentUser.uid
-                }),
-                });
-                const data = await response.json();
-                //console.log(data)
-                //console.log(data);
+                const data = await getUserActiveGame(currentUser.uid)
+                
                 if(Object.keys(data).length === 0){
                     setIsRunningGame(false)
-                }
-                else{
+                } else{
                     setIsRunningGame(true)
                 }
-                //console.log("here")
-              } catch (error) {
+            } catch (error) {
                 console.error('Error:', error);
-              }
-            
-          };
+            }
+        };
       
-          fetchData();} , []);
+        fetchData();
+    } , []);
 
     const [leaderboard, setLeaderboard] = useState([])
 
@@ -121,7 +103,7 @@ const Home = () => {
             <div className="flex flex-col items-center justify-center bg-gray-100">
                 <div className='text-2xl font-bold pt-14'>
                 {isRunningGame && isRunningGame != null ? (
-                                   <button onClick={() => {navigate('/game')}}
+                                   <button onClick={continueGameOnClick}
                                    className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
                                Continue Game
                            </button>

@@ -67,11 +67,10 @@ class StockUI extends Component {
     componentDidUpdate(prevProps) {
         //if either props change then recompute
         if (prevProps.ticker !== this.props.ticker) {
-          
                 this.fetch_stock_data()
-            
         }
-        if (prevProps.currentDate !== this.props.currentDate) {
+        
+        if (prevProps.currentDate && prevProps.currentDate !== this.props.currentDate) {
             this.fetch_stock_data()
         }
     }

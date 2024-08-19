@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
-import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio } from '../../help/help'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio, getUserActiveGame, updateGame } from '../../help/help'
 import StockUI from './stockUI'
 import { auth } from '../../firebase/firebase'
 
@@ -107,19 +107,34 @@ async function sellStock(ticker, quantity, date, gameId) {
 
 const Game = () => {
     const navigate = useNavigate();
-    const gameId = 'yRHqAIZsbiHvqu9ONC1t';
+    const currentUser = auth.currentUser;
+
+    const [game, setGame] = useState(null);
+    const [portfolio, setPortfolio] = useState(null);
+
+    const [isBuyPopupOpen, setIsBuyPopupOpen] = useState(false);
+    const [isSellPopupOpen, setIsSellPopupOpen] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState();
     const [selectedOption, setSelectedOption] = useState('');
 
-    const defaultDate = "2005-10-10"
-    const [seletedDate, setSeletedDate] = useState(defaultDate);
+    const [seletedDate, setSeletedDate] = useState(null);
 
     const [currentStockPrice, setCurrentStockPrice] = useState();
 
 
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+
+    useEffect(() => {
+        const gameObj = getUserActiveGame(currentUser.uid);
+        gameObj.then((data) => {
+            setGame(data);
+            setSeletedDate(data.currentDate);
+            const gamePortfolio = getGamePortfilio(data.id);
+            gamePortfolio.then((portfolioData) => setPortfolio(portfolioData));
+        });
+    }, []);
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -153,16 +168,31 @@ const Game = () => {
         const chosenDate = getDate(e.target.value);
         const currentDate = getDate(seletedDate);
 
+        const updateGameOnDateChange = (newCurrentDate) => {
+            const gamePromise = updateGame(game.id, currentUser.uid, newCurrentDate, 0, "ACTIVE");
+            gamePromise.then((newGame) => setGame(newGame));
+        }
+
+        if(!selectedOption) {
+            alert("Please select a stock through the search bar first!");
+            return;
+        }
+
         if(chosenDate < currentDate) {
             alert("You can only go forward in time")
         } else if(chosenDate.getDay() == 6) { // Is the day of the week a Saturday?
             chosenDate.setDate(chosenDate.getDate() - 1);
-            setSeletedDate(dateToStringFormat(chosenDate))
+            const newDateStr = dateToStringFormat(chosenDate);
+            setSeletedDate(newDateStr);
+            updateGameOnDateChange(newDateStr);
         } else if(chosenDate.getDay() == 0) { // Is the day of the week a Sunday?
             chosenDate.setDate(chosenDate.getDate() + 1);
-            setSeletedDate(dateToStringFormat(chosenDate))
+            const newDateStr = dateToStringFormat(chosenDate);
+            setSeletedDate(newDateStr);
+            updateGameOnDateChange(newDateStr);
         } else {
-            setSeletedDate(e.target.value)
+            setSeletedDate(e.target.value);
+            updateGameOnDateChange(e.target.value);
         }
     }
 
@@ -171,16 +201,6 @@ const Game = () => {
         setShowDropdown(false);
         setSelectedOption(option)
     };
-
-    const [portfolio, setPortfolio] = useState(null);
-
-    useEffect(() => {
-        const gamePortfolio = getGamePortfilio(gameId);
-        gamePortfolio.then(data => setPortfolio(data));
-    }, []);
-
-    const [isBuyPopupOpen, setIsBuyPopupOpen] = useState(false);
-    const [isSellPopupOpen, setIsSellPopupOpen] = useState(false);
 
     const toggleBuyPopup = () => {
         setIsBuyPopupOpen(!isBuyPopupOpen);
@@ -209,18 +229,16 @@ const Game = () => {
     };
 
     const onBuyPopupClosed = (quantity) => {
-        const updatedPortfolio = buyStock(selectedOption, quantity, seletedDate, gameId);
+        const updatedPortfolio = buyStock(selectedOption, quantity, seletedDate, game.id);
         updatedPortfolio.then((data) => setPortfolio(data));
         toggleBuyPopup();
     };
 
     const onSellPopupClosed = (quantity) => {
-        const updatedPortfolio = sellStock(selectedOption, quantity, seletedDate, gameId);
+        const updatedPortfolio = sellStock(selectedOption, quantity, seletedDate, game.id);
         updatedPortfolio.then((data) => setPortfolio(data));
         toggleSellPopup();
     };
-
-    const currentUser = auth.currentUser;
 
     if(!currentUser) {
         return <Navigate to={'/login'} replace={true} />;
