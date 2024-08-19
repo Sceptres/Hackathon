@@ -30,7 +30,9 @@ async def buy_stock():
             else:
                 portfolio['stocks'][ticker] = quantity
             portfolio['balance'] -= total_price
-            response = jsonify(db_connection.update_portfolio(portfolio_id=portfolio['id'],portfolio=Portfolio.from_dict(portfolio)))
+
+            portfolio_obj = Portfolio.from_dict(portfolio)
+            response = jsonify(db_connection.update_portfolio(portfolio_id=portfolio['id'], portfolio=portfolio_obj))
             response.status_code = 200
         else:
             response = jsonify()
@@ -63,7 +65,9 @@ async def sell_stock():
         if ticker in portfolio['stocks'].keys() and portfolio['stocks'][ticker] >= quantity:
             portfolio['stocks'][ticker] -= quantity
             portfolio['balance'] += total_price
-            response = jsonify(db_connection.update_portfolio(portfolio_id=portfolio['id'],portfolio=Portfolio.from_dict(portfolio)))
+
+            portfolio_obj = Portfolio.from_dict(portfolio)
+            response = jsonify(db_connection.update_portfolio(portfolio_id=portfolio['id'], portfolio=portfolio_obj))
             response.status_code = 200
         else:
             response = jsonify()
