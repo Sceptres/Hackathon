@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import avatar from './avatar.png'
 import './home.css'
 
@@ -92,29 +92,29 @@ const Home = () => {
         });
     };
 
-    const getLeaderboard = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:8001/core/leaderboard/get', {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',             
-                },
-            });
-            const data = await response.json();
-            console.log(data)
-            return data
-        } catch(error) {
-            console.log('Unknown error')
-        }
-    }
+    const [leaderboard, setLeaderboard] = useState([])
 
-    // const [leaderboard, setLeaderboard] = useState(() => {
-    //     const data = getLeaderboard();  
-    //     data.then((arr) => {
-    //         setLeaderboard(arr)
-    //     })
-    //     return []
-    // })
+    useEffect(() => {
+        const getLeaderboard = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8001/core/leaderboard/get', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',             
+                    },
+                });
+                const data = await response.json();
+                return data
+            } catch(error) {
+                console.log('Unknown error')
+            }
+        }
+
+        const data = getLeaderboard();
+        data.then((arr) => {
+            setLeaderboard(arr)
+        })
+    }, [])
 
     if(!userLoggedIn) {
         return (
@@ -122,8 +122,7 @@ const Home = () => {
         );
     } else {
         return (
-            <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
-                
+            <div className="flex flex-col items-center justify-center bg-gray-100">
                 <div className='text-2xl font-bold pt-14'>
                 {isRunningGame && isRunningGame != null ? (
                                    <button onClick={() => {navigate('/game')}}
@@ -151,7 +150,7 @@ const Home = () => {
                         </button>
                     </div>
     
-                    {/* <ul className="overflow-y-scroll scrollbar-hide w-full mt-8">
+                    <ul className="overflow-y-scroll scrollbar-hide w-full mt-8">
                         {
                             leaderboard.map((element, index) => 
                             (<LeaderboardItem 
@@ -162,7 +161,7 @@ const Home = () => {
                                 highscore={element.highscore}/>)
                             )
                         }
-                    </ul> */}
+                    </ul>
                     <div className="mt-4 flex justify-center">
                         <button className="text-white bg-blue-600 px-6 py-2 rounded hover:bg-blue-500 transition duration-300">
                             Start Game

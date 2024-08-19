@@ -1,11 +1,11 @@
 import React from 'react'
 import { useAuth } from '../../contexts/authContext'
-import { doSignOut } from '../../firebase/auth'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 
 
 const EndGame = () => {
     const navigate = useNavigate()
+
     return (
         <div>Game Over!
 
@@ -16,7 +16,7 @@ const EndGame = () => {
                 Home
             </button>
         </div>
-    )
+    );   
 }
 
 export default EndGame
