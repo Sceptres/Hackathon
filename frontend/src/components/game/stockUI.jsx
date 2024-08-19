@@ -64,10 +64,6 @@ class StockUI extends Component {
             },
         };
     }
-    componentDidMount() {
-        this.fetch_stock_data()
-
-    }
     componentDidUpdate(prevProps) {
         //if either props change then recompute
         if (prevProps.ticker !== this.props.ticker) {
