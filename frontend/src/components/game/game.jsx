@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { useNavigate, Navigate } from 'react-router-dom'
 import StockUI from './stockUI'
+import { getDate, dateToStringFormat } from '../../help'
 
 
 const Game = () => {
@@ -9,8 +10,9 @@ const Game = () => {
 
     const [searchTerm, setSearchTerm] = useState();
     const [selectedOption, setSelectedOption] = useState('');
-    const [seletedDate, setSeletedDate] = useState('');
+
     const defaultDate = "2005-10-10"
+    const [seletedDate, setSeletedDate] = useState(defaultDate);
 
 
 
@@ -48,8 +50,20 @@ const Game = () => {
     }
 
     const handleDateChange = (e) => {
+        const chosenDate = getDate(e.target.value);
+        const currentDate = getDate(seletedDate);
 
-        setSeletedDate(e.target.value)
+        if(chosenDate < currentDate) {
+            alert("You can only go forward in time")
+        } else if(chosenDate.getDay() == 6) { // Is the day of the week a Saturday?
+            chosenDate.setDate(chosenDate.getDate() - 1);
+            setSeletedDate(dateToStringFormat(chosenDate))
+        } else if(chosenDate.getDay() == 0) { // Is the day of the week a Sunday?
+            chosenDate.setDate(chosenDate.getDate() + 1);
+            setSeletedDate(dateToStringFormat(chosenDate))
+        } else {
+            setSeletedDate(e.target.value)
+        }
     }
 
 
@@ -76,7 +90,7 @@ const Game = () => {
 
                     <form className="flex items-center max-w-sm mx-auto">
                         
-                        <input type="date" id="stock" name="stock" value={seletedDate || defaultDate} onChange={handleDateChange} className="mr-5"></input>
+                        <input type="date" id="stock" name="stock" value={seletedDate} onChange={handleDateChange} className="mr-5"></input>
 
                         <label htmlFor="simple-search" className="sr-only">Search</label>
                         <div className="relative w-full">
@@ -111,7 +125,7 @@ const Game = () => {
                         </button>
                     </form>
 
-                    <StockUI ticker={selectedOption} date={seletedDate} defaultDate={defaultDate}></StockUI>
+                    <StockUI ticker={selectedOption} currentDate={seletedDate}></StockUI>
 
                     <div className="flex justify-center space-x-4 mt-4">
                         <button
