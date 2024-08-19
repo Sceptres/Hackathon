@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import avatar from '../../avatar.png'
 
 
@@ -13,26 +13,39 @@ function StatComponent(props) {
     );
 }
 
-const EndGame = (props) => {
+const EndGame = () => {
     const { userLoggedIn } = useAuth();
+
+    const getGamePortfolio = async (gameId) => {
+        try {
+            const response = fetch('http://127.0.0.1:8001/core/game/portfolio/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',             
+                },
+                body: JSON.stringify({
+                    gameId: gameId
+                })
+            });
+            const data = await response.json();
+            return data;
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const {gameId} = useLocation(); 
+    const [portfolio, setPortfolio] = useState(() => {
+        const portfolioDataRequest = getGamePortfolio(gameId);
+        portfolioDataRequest.then((portfolioData) => setPortfolio(portfolioData));
+        return []
+    })
 
     if(!userLoggedIn) {
         return (
             <Navigate to={'/login'} replace={true} />
         );
     } else {
-        const user = {
-            profilePic: "https://via.placeholder.com/150", // Placeholder image URL
-            displayName: "John Doe",
-            stats: {
-              balance: 10000,
-              score: 12000,
-              netProfit: 2000,
-              totalProfit: 5000,
-              totalLoss: 3000,
-              totalTrades: 50,
-            },
-          };
         return (
             <div className="bg-white w-ful h-full">
                 <div className="flex items-center mb-4">
@@ -45,10 +58,10 @@ const EndGame = (props) => {
                 </div>
         
                 <div className="grid grid-cols-2 gap-4">
-                    <StatComponent title='Balance' preStatText='$' stat={user.stats.balance} />
-                    <StatComponent title='Score' preStatText='$' stat={user.stats.score} />
-                    <StatComponent title='Net Profit' preStatText='$' stat={user.stats.netProfit} />
-                    <StatComponent title='Total Trades' stat={user.stats.totalTrades} />
+                    <StatComponent title='Balance' preStatText='$' stat={portfolio.balance} />
+                    <StatComponent title='Score' preStatText='$' stat={} />
+                    <StatComponent title='Net Profit' preStatText='$' stat={} />
+                    <StatComponent title='Portfolio Stock Diversity' stat={Object.keys(portfolio.stocks).length} />
                 </div>
             </div>
             
