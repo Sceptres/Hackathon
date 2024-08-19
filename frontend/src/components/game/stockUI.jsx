@@ -70,27 +70,32 @@ class StockUI extends Component {
     componentDidUpdate(prevProps) {
         //if either props change then recompute
         if (prevProps.ticker !== this.props.ticker) {
-            this.fetch_stock_data()
+          
+                this.fetch_stock_data()
+            
         }
-
         if (prevProps.date !== this.props.date) {
+            if(this.props.date >prevProps.date ){
             this.fetch_stock_data()
+            }else{
+                alert("You can only go forward in Time")
+            }
         }
     }
     fetch_stock_data = async () => {
         try {
             let startDate = this.props.date
-            let newDate = "2010-10-10" // setting to 2010 as start date
+            let newDate = this.props.defaultDate // setting to 2010 as start date
 
             if (!startDate) {
                 startDate = new Date()
-
                 const year = startDate.getFullYear();
                 const month = String(startDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
                 const day = String(startDate.getDate()).padStart(2, '0');
 
                 startDate = `${year}-${month}-${day}`;
             } else {
+
                 newDate = new Date(this.props.date);
                 newDate.setMonth(newDate.getMonth() - 1);
                 const year = newDate.getFullYear();

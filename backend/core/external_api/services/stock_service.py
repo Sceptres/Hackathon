@@ -1,6 +1,5 @@
 import aiohttp
 import yfinance as yf
-from yahoo_fin import stock_info as si
 
 from .api_service import ApiService
 

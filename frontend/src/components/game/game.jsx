@@ -7,9 +7,11 @@ import StockUI from './stockUI'
 
 const Game = () => {
     const navigate = useNavigate()
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState();
     const [selectedOption, setSelectedOption] = useState('');
     const [seletedDate, setSeletedDate] = useState('');
+    const defaultDate = "2005-10-10"
+
 
 
     const [filteredOptions, setFilteredOptions] = useState([]);
@@ -73,7 +75,8 @@ const Game = () => {
                 <ul className="overflow-y-scroll scrollbar-hide w-full mt-8">
 
                     <form className="flex items-center max-w-sm mx-auto">
-                        <input type="date" id="stock" name="stock" onChange={handleDateChange} class="mr-5"></input>
+                        
+                        <input type="date" id="stock" name="stock" value={seletedDate || defaultDate} onChange={handleDateChange} class="mr-5"></input>
 
                         <label htmlFor="simple-search" className="sr-only">Search</label>
                         <div className="relative w-full">
@@ -108,7 +111,7 @@ const Game = () => {
                         </button>
                     </form>
 
-                    <StockUI ticker={selectedOption} date={seletedDate}></StockUI>
+                    <StockUI ticker={selectedOption} date={seletedDate} defaultDate={defaultDate}></StockUI>
 
                 </ul>
 
