@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../contexts/authContext'
+import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
 import avatar from './avatar.png'
@@ -8,8 +8,13 @@ import './home.css'
 
 const Home = () => {
     const navigate = useNavigate();
-    const { userLoggedIn } = useAuth();
-    const { currentUser } = useAuth();
+    const currentUser = auth.currentUser;
+
+    const logoutUser = () => {
+        doSignOut().then(() => {
+            navigate('/login');
+        });
+    };
 
     const [isRunningGame, setIsRunningGame] = useState(null); // To store fetched data
 
@@ -84,13 +89,6 @@ const Home = () => {
           };
       
           fetchData();} , []);
-    
-
-    const logoutUser = () => {
-        doSignOut().then(() => {
-            navigate('/login');
-        });
-    };
 
     const [leaderboard, setLeaderboard] = useState([])
 
@@ -116,10 +114,8 @@ const Home = () => {
         })
     }, [])
 
-    if(!userLoggedIn) {
-        return (
-            <Navigate to={'/login'} replace={true} />
-        );
+    if(!currentUser) {
+        return <Navigate to={'/login'} replace={true} />;
     } else {
         return (
             <div className="flex flex-col items-center justify-center bg-gray-100">
