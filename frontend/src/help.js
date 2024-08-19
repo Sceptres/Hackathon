@@ -22,6 +22,19 @@ export function dateToStringFormat(date) {
     return `${year}-${month}-${day}`;
 }
 
+/**
+ * 
+ * @param {number} money The amout to convert to USD format 
+ * @returns A string representing the amount in the format $###,###,###.##
+ */
+export function formatNumberToUSD(money) {
+    let USDollar = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+    return USDollar.format(money);
+}
+
 /*********************DATABASE BACKEND CALLS*********************/
 /**
  * 
@@ -40,54 +53,4 @@ export async function getGamePortfilio(gameId) {
     });
     const portfolio = await response.json();
     return portfolio;
-}
-
-/**
- * 
- * @param {string} ticker The ticker of the stock being bought
- * @param {number} quantity The amount of the given stock to be bought
- * @param {string} date The date on which the stock is being bought
- * @param {string} gameId The id of the game where the buy transaction is happening
- * @returns The updated portfolio of the given game after the buy transaction
- */
-export async function buyStock(ticker, quantity, date, gameId) {
-    const response = await fetch('http://127.0.0.1:8001/transaction/buy', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            ticker: ticker,
-            quantity: quantity,
-            date: date,
-            gameId: gameId
-        })
-    });
-    const updatedPortfolio = await response.json();
-    return updatedPortfolio;
-}
-
-/**
- * 
- * @param {string} ticker The ticker of the stock being sold
- * @param {number} quantity The amount of the given stock to be sold
- * @param {string} date The date on which the stock is being sold
- * @param {string} gameId The id of the game where the sell transaction is happening
- * @returns The updated portfolio of the given game after the sell transaction
- */
-export async function sellStock(ticker, quantity, date, gameId) {
-    const response = await fetch('http://127.0.0.1:8001/transaction/sell', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            ticker: ticker,
-            quantity: quantity,
-            date: date,
-            gameId: gameId
-        })
-    });
-    const updatedPortfolio = await response.json();
-    return updatedPortfolio;
 }

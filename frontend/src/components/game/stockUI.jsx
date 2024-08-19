@@ -108,7 +108,12 @@ class StockUI extends Component {
                 }),
             });
             const data = await response.json();
-            this.updateChartData(data);
+            if(data.length === 0) {
+                alert('No data for this stock at this time. Please choose another stock.')
+            } else {
+                this.props.stockPriceUpdater(data[data.length-1].price); // Update the current stock price
+                this.updateChartData(data);   
+            }
         } catch (error) {
             console.error('Error:', error);
         }

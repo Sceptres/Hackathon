@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { getDate, dateToStringFormat, getGamePortfilio, buyStock, sellStock } from '../../help'
+import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio } from '../../help'
 import StockUI from './stockUI'
 
 /**
@@ -11,6 +11,11 @@ import StockUI from './stockUI'
  */
 const Popup = (props) => {
     const [sliderValue, setSliderValue] = useState(0);
+
+    const formatStockCount = (count) => {
+        const str = formatNumberToUSD(count);
+        return str.substring(1);
+    }
   
     return (
         <>
@@ -22,15 +27,15 @@ const Popup = (props) => {
 
                     <input
                         type="range"
-                        min={props.minValue}
+                        min={0}
                         max={props.maxValue}
                         value={sliderValue || props.startValue}
                         onChange={(e) => setSliderValue(e.target.value)}
                         className="w-full"
                     />
 
-                    <p className="mt-2 text-center">Stock Count: ${sliderValue}</p>
-                    <p className="mt-2 text-center">Value: ${(sliderValue*7.76).toFixed(2)}</p>
+                    <p className="mt-2 text-center">Stock Count: {formatStockCount(sliderValue)}</p>
+                    <p className="mt-2 text-center">Value: {formatNumberToUSD(sliderValue*props.stockPrice)}</p>
 
                     <button
                         onClick={() => props.onClose(sliderValue)}
@@ -50,15 +55,67 @@ const Popup = (props) => {
     );
   };
 
+/**
+ * 
+ * @param {string} ticker The ticker of the stock being bought
+ * @param {number} quantity The amount of the given stock to be bought
+ * @param {string} date The date on which the stock is being bought
+ * @param {string} gameId The id of the game where the buy transaction is happening
+ * @returns The updated portfolio of the given game after the buy transaction
+ */
+async function buyStock(ticker, quantity, date, gameId) {
+    const response = await fetch('http://127.0.0.1:8001/transaction/buy', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ticker: ticker,
+            quantity: quantity,
+            date: date,
+            gameId: gameId
+        })
+    });
+    const updatedPortfolio = await response.json();
+    return updatedPortfolio;
+}
+
+/**
+ * 
+ * @param {string} ticker The ticker of the stock being sold
+ * @param {number} quantity The amount of the given stock to be sold
+ * @param {string} date The date on which the stock is being sold
+ * @param {string} gameId The id of the game where the sell transaction is happening
+ * @returns The updated portfolio of the given game after the sell transaction
+ */
+async function sellStock(ticker, quantity, date, gameId) {
+    const response = await fetch('http://127.0.0.1:8001/transaction/sell', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ticker: ticker,
+            quantity: quantity,
+            date: date,
+            gameId: gameId
+        })
+    });
+    const updatedPortfolio = await response.json();
+    return updatedPortfolio;
+}
+
 const Game = () => {
     const navigate = useNavigate()
-    const gameId = 'get game id here';
+    const gameId = 'yRHqAIZsbiHvqu9ONC1t';
 
     const [searchTerm, setSearchTerm] = useState();
     const [selectedOption, setSelectedOption] = useState('');
 
     const defaultDate = "2005-10-10"
     const [seletedDate, setSeletedDate] = useState(defaultDate);
+
+    const [currentStockPrice, setCurrentStockPrice] = useState();
 
 
     const [filteredOptions, setFilteredOptions] = useState([]);
@@ -177,7 +234,7 @@ const Game = () => {
             </div>
 
             <div className="text-xl font-semibold mt-4">
-                Balance: ${portfolio && portfolio.balance}
+                Balance: {portfolio && portfolio.balance && formatNumberToUSD(portfolio.balance)}
             </div>
 
             <div className="bg-white w-full h-full">
@@ -221,7 +278,7 @@ const Game = () => {
                         </button>
                     </form>
 
-                    <StockUI ticker={selectedOption} currentDate={seletedDate}></StockUI>
+                    <StockUI ticker={selectedOption} currentDate={seletedDate} stockPriceUpdater={setCurrentStockPrice}></StockUI>
 
                     <div className="flex justify-center space-x-4 mt-4">
                         <button
@@ -230,14 +287,14 @@ const Game = () => {
                         >
                             Sell
                         </button>
-                        {isSellPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={portfolio.stocks[selectedOption]} startValue={0} buttonName={'Sell'} buttonClass={'bg-red-500 text-white rounded-lg hover:bg-red-600'} onClose={onSellPopupClosed} toggleMethod={toggleSellPopup} />}
+                        {isSellPopupOpen && <Popup title={selectedOption} stockPrice={currentStockPrice} maxValue={portfolio.stocks[selectedOption]} startValue={0} buttonName={'Sell'} buttonClass={'bg-red-500 text-white rounded-lg hover:bg-red-600'} onClose={onSellPopupClosed} toggleMethod={toggleSellPopup} />}
                         <button
                             onClick={onBuyClick}
                             className="w-1/3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                         >
                             Buy
                         </button>
-                        {isBuyPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={onBuyPopupClosed} toggleMethod={toggleBuyPopup} />}
+                        {isBuyPopupOpen && <Popup title={selectedOption} stockPrice={currentStockPrice} maxValue={Math.floor(portfolio && currentStockPrice && portfolio.balance/currentStockPrice)} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={onBuyPopupClosed} toggleMethod={toggleBuyPopup} />}
                     </div>
                 </ul>
 
