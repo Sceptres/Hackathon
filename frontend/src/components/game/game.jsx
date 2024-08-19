@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { useNavigate, Navigate } from 'react-router-dom'
+import { getDate, dateToStringFormat, getGamePortfilio, buyStock, sellStock } from '../../help'
 import StockUI from './stockUI'
-import { getDate, dateToStringFormat } from '../../help'
 
 /**
  * 
@@ -14,9 +14,7 @@ const Popup = (props) => {
   
     return (
         <>
-            <div
-                className="fixed inset-0 bg-black bg-opacity-50 z-40"
-                onClick={props.onClose}></div>
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative pt-12">
@@ -31,13 +29,20 @@ const Popup = (props) => {
                         className="w-full"
                     />
 
-                    <p className="mt-2 text-center">Value: ${sliderValue}</p>
+                    <p className="mt-2 text-center">Stock Count: ${sliderValue}</p>
+                    <p className="mt-2 text-center">Value: ${(sliderValue*7.76).toFixed(2)}</p>
 
                     <button
-                        onClick={props.onClose}
+                        onClick={() => props.onClose(sliderValue)}
                         className={`mt-4 w-full py-2 ${props.buttonClass}`}
                     >
                         {props.buttonName}
+                    </button>
+                    <button
+                        onClick={props.toggleMethod}
+                        className="mt-2 w-full py-2 bg-gray-200 text-gray-700 rounded"
+                    >
+                        Cancel
                     </button>
                 </div>
             </div>
@@ -47,6 +52,7 @@ const Popup = (props) => {
 
 const Game = () => {
     const navigate = useNavigate()
+    const gameId = 'get game id here';
 
     const [searchTerm, setSearchTerm] = useState();
     const [selectedOption, setSelectedOption] = useState('');
@@ -109,24 +115,53 @@ const Game = () => {
         setSelectedOption(option)
     };
 
+    const [portfolio, setPortfolio] = useState(null);
+
+    useEffect(() => {
+        const gamePortfolio = getGamePortfilio(gameId);
+        gamePortfolio.then(data => setPortfolio(data));
+    }, []);
+
     const [isBuyPopupOpen, setIsBuyPopupOpen] = useState(false);
     const [isSellPopupOpen, setIsSellPopupOpen] = useState(false);
 
     const toggleBuyPopup = () => {
         setIsBuyPopupOpen(!isBuyPopupOpen);
-    }
+    };
 
     const toggleSellPopup = () => {
         setIsSellPopupOpen(!isSellPopupOpen);
-    }
+    };
 
     const onBuyClick = () => {
-        toggleBuyPopup();
-    }
+        if(selectedOption) {
+            toggleBuyPopup();
+        } else {
+            alert('No stock chosen to buy!');
+        }
+    };
 
     const onSellClick = () => {
+        if(selectedOption && portfolio.stocks[selectedOption] > 0) {
+            toggleSellPopup();
+        } else if(!selectedOption) {
+            alert('No stock chosen to sell!');
+        } else if(!portfolio.stocks[selectedOption] || (portfolio.stocks && portfolio.stocks[selectedOption] > 0)) {
+            alert('Cannot sell a stock that you do not own!');
+        }
+    };
+
+    const onBuyPopupClosed = (quantity) => {
+        const updatedPortfolio = buyStock(selectedOption, quantity, seletedDate, gameId);
+        updatedPortfolio.then((data) => setPortfolio(data));
+        toggleBuyPopup();
+    };
+
+    const onSellPopupClosed = (quantity) => {
+        const updatedPortfolio = sellStock(selectedOption, quantity, seletedDate, gameId);
+        updatedPortfolio.then((data) => setPortfolio(data));
         toggleSellPopup();
-    }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100">
@@ -140,6 +175,11 @@ const Game = () => {
                     Read the Investment Guide!
                 </button>
             </div>
+
+            <div className="text-xl font-semibold mt-4">
+                Balance: ${portfolio && portfolio.balance}
+            </div>
+
             <div className="bg-white w-full h-full">
 
                 <ul className="overflow-y-scroll scrollbar-hide w-full mt-8">
@@ -190,17 +230,15 @@ const Game = () => {
                         >
                             Sell
                         </button>
-                        {isSellPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Sell'} buttonClass={'bg-red-500 text-white rounded-lg hover:bg-red-600'} onClose={toggleSellPopup} />}
+                        {isSellPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={portfolio.stocks[selectedOption]} startValue={0} buttonName={'Sell'} buttonClass={'bg-red-500 text-white rounded-lg hover:bg-red-600'} onClose={onSellPopupClosed} toggleMethod={toggleSellPopup} />}
                         <button
                             onClick={onBuyClick}
                             className="w-1/3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                         >
                             Buy
                         </button>
-                        {isBuyPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={toggleBuyPopup} />}
+                        {isBuyPopupOpen && <Popup title={selectedOption} minValue={0} maxValue={100} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={onBuyPopupClosed} toggleMethod={toggleBuyPopup} />}
                     </div>
-
-
                 </ul>
 
             </div>
