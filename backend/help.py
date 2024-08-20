@@ -13,3 +13,12 @@ async def get_stock_price(ticker,date):
     data = await stock_api.get_stock_by_date(date,new_date,ticker)
 
     return data[0]["price"]
+
+async def calculate_portfolio_networth(current_game_date, balance: float, stocks: dict):
+    net_worth = balance
+
+    for stock_ticker, stock_count in stocks.items():
+        stock_price = await get_stock_price(ticker=stock_ticker, date=current_game_date)
+        net_worth += stock_count * stock_price
+
+    return net_worth

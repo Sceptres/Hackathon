@@ -2,18 +2,75 @@ import React, { useEffect, useState } from 'react'
 import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
+import { getDate, dateToStringFormat, formatNumberToUSD, getUserActiveGame, createUserGame } from '../../help/help';
 import avatar from './avatar.png'
 import './home.css'
 
 
 const Home = () => {
     const navigate = useNavigate();
+    const currentUser = auth.currentUser;
 
     const logoutUser = () => {
         doSignOut().then(() => {
             navigate('/login');
         });
     };
+
+    const [isRunningGame, setIsRunningGame] = useState(null); // To store fetched data
+
+    let startDate = getDate("2005-10-10");
+    startDate = dateToStringFormat(startDate);
+
+    const start_game = async() => {
+        try {
+            const data = await createUserGame(currentUser.uid, startDate);
+            
+            if(Object.keys(data).length === 0){
+                setIsRunningGame(false)
+            }
+            else{
+                setIsRunningGame(true)
+            }
+            navigate('/game', {replace: true});
+          } catch (error) {
+            console.error('Error:', error);
+          }
+    }
+
+    const continueGameOnClick = async () => {
+        try {
+            const data = await getUserActiveGame(currentUser.uid);
+
+            if(Object.keys(data).length === 0){
+                setIsRunningGame(false)
+            } else{
+                setIsRunningGame(true)
+            }
+
+            navigate('/game', {replace: true});
+        } catch(error) {
+            console.error('Error:', error);
+        }   
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getUserActiveGame(currentUser.uid)
+                
+                if(Object.keys(data).length === 0){
+                    setIsRunningGame(false)
+                } else{
+                    setIsRunningGame(true)
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+      
+        fetchData();
+    } , []);
 
     const [leaderboard, setLeaderboard] = useState([])
 
@@ -39,18 +96,22 @@ const Home = () => {
         })
     }, [])
 
-    const currentUser = auth.currentUser;
-
     if(!currentUser) {
         return <Navigate to={'/login'} replace={true} />;
     } else {
         return (
             <div className="flex flex-col items-center justify-center bg-gray-100">
                 <div className='text-2xl font-bold pt-14'>
-                    <button onClick={() => {navigate('/game')}}
-                        className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
-                        Start Game
-                    </button>
+                {isRunningGame && isRunningGame != null ? (
+                                   <button onClick={continueGameOnClick}
+                                   className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
+                               Continue Game
+                           </button>
+
+            ) :null}       {!isRunningGame && isRunningGame != null?  (           <button onClick={start_game}
+            className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
+        Start Game
+    </button>):null}
                     <button onClick={() => {navigate('/guide')}}
                         className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
                         Read the Investment Guide!
@@ -79,11 +140,6 @@ const Home = () => {
                             )
                         }
                     </ul>
-                    <div className="mt-4 flex justify-center">
-                        <button className="text-white bg-blue-600 px-6 py-2 rounded hover:bg-blue-500 transition duration-300">
-                            Start Game
-                        </button>
-                    </div>
                 </div>
             </div>
         );
@@ -102,7 +158,7 @@ function LeaderboardItem(props) {
                 />
                 <span className="font-medium text-base text-gray-800">{props.displayName}</span>
             </div>
-            <span className="font-semibold text-lg text-gray-700">Highscore: ${props.highscore}</span>
+            <span className="font-semibold text-lg text-gray-700">Highscore: {formatNumberToUSD(props.highscore)}</span>
         </li>
     );
 }
