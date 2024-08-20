@@ -14,10 +14,10 @@ def index():
 async def end_game():
     try:
         request_data = request.get_json()
-        user_id = request_data['userId']
+        game_id = request_data['gameId']
 
-        user = db_connection.get_user(user_id=user_id)
-        game = db_connection.get_user_active_game(user_id=user_id)
+        game = db_connection.get_game(game_id=game_id)
+        user = db_connection.get_user(user_id=game['userId'])
         portfolio = db_connection.get_game_portfolio(game['id'])
 
         # Update game
@@ -28,9 +28,14 @@ async def end_game():
         # Did the user reach a new highscore?
         if game['score'] > user['highscore']:
             user['highscore'] = game['score']
+            portfolio['achievedNewHighScore'] = True
+        else:
+            portfolio['achievedNewHighScore'] = False
 
         db_connection.update_game(game['id'], Game.from_dict(game))
         db_connection.update_user(User.from_dict(user))
+
+        portfolio['score'] = game['score']
 
         response = jsonify(portfolio)
         response.status_code = 200

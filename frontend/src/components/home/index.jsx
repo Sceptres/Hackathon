@@ -3,7 +3,7 @@ import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { getDate, dateToStringFormat, formatNumberToUSD, getUserActiveGame, createUserGame } from '../../help/help';
-import avatar from './avatar.png'
+import avatar from '../../avatar.png'
 import './home.css'
 
 

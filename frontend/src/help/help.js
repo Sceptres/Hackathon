@@ -154,17 +154,17 @@ export async function updateGame(gameId, userId, currentDate, score, status) {
 
 /**
  * 
- * @param {string} userId The id of the user to end active game
+ * @param {string} gameId The id of the game to end
  * @returns The portfolio with the users stats for that game
  */
-export async function endUserActiveGame(userId) {
+export async function endGame(gameId) {
     const response = await fetch('http://127.0.0.1:8001/core/game/end', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',             
         },
         body: JSON.stringify({
-            userId: userId
+            gameId: gameId
         }),
       });
       const portfolio = await response.json();
