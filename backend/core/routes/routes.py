@@ -11,7 +11,21 @@ def index():
 #######################GAME LOGIC API ENDPOINTS#####################
 ####################################################################
 @core_blueprint.route('/game/end', methods=['POST'])
-async def end_game():
+async def end_game() -> Response:
+    """
+    POST /game/end
+    Description: Ends an ongoing game, calculates the final score, updates 
+                 the game and user data, and checks if the user achieved a 
+                 new high score.
+    Request Data: A JSON object containing the 'gameId' (str) of the game 
+                  to be ended.
+    Response:
+        Success: Returns a JSON object containing the updated portfolio data, 
+                 the game score, and a flag indicating if a new high score was 
+                 achieved. Status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         game_id = request_data['gameId']
@@ -51,7 +65,16 @@ async def end_game():
 ####################################################################
 
 @core_blueprint.route('/user/insert', methods=['POST'])
-def insert_user():
+def insert_user() -> Response:
+    """
+    POST /user/insert
+    Description: Inserts a new user into the database.
+    Request Data: A JSON object representing the user data.
+    Response:
+        Success: Returns the created user as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         user: User = User.from_dict(request_data)
@@ -65,7 +88,16 @@ def insert_user():
         return response
     
 @core_blueprint.route('/game/insert', methods=['POST'])
-def insert_game():
+def insert_game() -> Response:
+    """
+    POST /game/insert
+    Description: Inserts a new game into the database.
+    Request Data: A JSON object representing the game data.
+    Response:
+        Success: Returns the created game as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         game: Game = Game.from_dict(request_data)
@@ -81,7 +113,16 @@ def insert_game():
         return response
 
 @core_blueprint.route('/portfolio/insert', methods=['POST'])
-def insert_portfolio():
+def insert_portfolio() -> Response:
+    """
+    POST /portfolio/insert
+    Description: Inserts a new portfolio into the database.
+    Request Data: A JSON object representing the portfolio data.
+    Response:
+        Success: Returns the created portfolio as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         portfolio: Portfolio = Portfolio.from_dict(request_data)
@@ -97,7 +138,16 @@ def insert_portfolio():
         return response
     
 @core_blueprint.route('/game/update', methods=['POST'])
-def update_game():
+def update_game() -> Response:
+    """
+    POST /game/update
+    Description: Updates an existing game in the database.
+    Request Data: A JSON object representing the updated game data. Must include the 'id' field.
+    Response:
+        Success: Returns the updated game as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         game_id = request_data['id']
@@ -115,7 +165,16 @@ def update_game():
     
 # Only API endpoint that accepts a GET request
 @core_blueprint.route('/leaderboard/get')
-def get_leaderboard():
+def get_leaderboard() -> Response:
+    """
+    GET /leaderboard/get
+    Description: Retrieves the user leaderboard from the database.
+    Request Data: None (GET request).
+    Response:
+        Success: Returns the leaderboard as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         leaderboard = db_connection.get_user_leaderboard()
 
@@ -128,7 +187,16 @@ def get_leaderboard():
         return response
     
 @core_blueprint.route('/user/get', methods=['POST'])
-def get_user():
+def get_user() -> Response:
+    """
+    POST /user/get
+    Description: Retrieves a user by ID from the database.
+    Request Data: A JSON object containing the 'id' field (user ID).
+    Response:
+        Success: Returns the user as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         user_id: str = request_data['id']
@@ -143,7 +211,16 @@ def get_user():
         return response
 
 @core_blueprint.route('/user/game/getActive', methods=['POST'])
-def get_user_active_game():
+def get_user_active_game() -> Response:
+    """
+    POST /user/game/getActive
+    Description: Retrieves the active game(s) for a specific user.
+    Request Data: A JSON object containing the 'userId' field.
+    Response:
+        Success: Returns a JSON object with the active game(s) and status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         user_id = request_data['userId']
@@ -158,7 +235,16 @@ def get_user_active_game():
         return response        
     
 @core_blueprint.route('/game/portfolio/get', methods=['POST'])
-def get_game_portfolio():
+def get_game_portfolio() -> Response:
+    """
+    POST /game/portfolio/get
+    Description: Retrieves the portfolio associated with a specific game.
+    Request Data: A JSON object containing the 'gameId' field.
+    Response:
+        Success: Returns the portfolio as a JSON object with status code 200.
+        Failure: Returns a JSON object with the error message and status code 500.
+    """
+
     try:
         request_data = request.get_json()
         game_id = request_data['gameId']

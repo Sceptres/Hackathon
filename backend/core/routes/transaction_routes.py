@@ -1,11 +1,30 @@
 from core import db_connection, transactions_blueprint
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from help import get_stock_price
 from db import Portfolio
 
-# Route for buying a certain stock at a certain date and quantity 
 @transactions_blueprint.route('/buy', methods=['POST'])
-async def buy_stock():
+async def buy_stock() -> Response:
+    """
+    POST /buy
+    Description: Handles the buying of a specified quantity of a stock at a given date for a specific game.
+    Request Data: A JSON object containing:
+                  - 'ticker' (str): The stock ticker symbol (e.g., AAPL).
+                  - 'quantity' (int): The number of shares to buy.
+                  - 'date' (str): The date on which the stock is bought in 'YYYY-MM-DD' format.
+                  - 'gameId' (str): The ID of the game the transaction is tied to.
+    Logic:
+        1. Retrieves the stock price for the given ticker on the specified date.
+        2. Calculates the total purchase price by multiplying the stock price by the quantity.
+        3. Retrieves the player's portfolio associated with the specified game ID.
+        4. Checks if the player has sufficient balance to make the purchase.
+        5. If sufficient funds are available, updates the portfolio by adding the stock and deducting the total price from the balance.
+        6. Constructs a new portfolio object and updates the database with the modified portfolio.
+    Response:
+        Success: Returns the updated portfolio as a JSON object with status code 200.
+        Failure: Returns a 400 status code if insufficient funds are available, or a 500 status code if an error occurs.
+    """
+
     try:
         # Get the request data
         request_data = request.get_json()
@@ -52,9 +71,28 @@ async def buy_stock():
         response.status_code = 500
         return response
     
-# Route for selling a certain stock at a certain date and quantity
 @transactions_blueprint.route('/sell', methods=['POST'])
-async def sell_stock():
+async def sell_stock() -> Response:
+    """
+    POST /sell
+    Description: Handles the selling of a specified quantity of a stock at a given date for a specific game.
+    Request Data: A JSON object containing:
+                  - 'ticker' (str): The stock ticker symbol (e.g., AAPL).
+                  - 'quantity' (int): The number of shares to sell.
+                  - 'date' (str): The date on which the stock is sold in 'YYYY-MM-DD' format.
+                  - 'gameId' (str): The ID of the game the transaction is tied to.
+    Logic:
+        1. Retrieves the stock price for the given ticker on the specified date.
+        2. Calculates the total sale price by multiplying the stock price by the quantity.
+        3. Retrieves the player's portfolio associated with the specified game ID.
+        4. Checks if the player has the stock in their portfolio and sufficient quantity to sell.
+        5. If sufficient shares are available, updates the portfolio by removing the stock and adding the total sale price to the balance.
+        6. Constructs a new portfolio object and updates the database with the modified portfolio.
+    Response:
+        Success: Returns the updated portfolio as a JSON object with status code 200.
+        Failure: Returns a 400 status code if insufficient shares are available, or a 500 status code if an error occurs.
+    """
+
     try:
         # Refer to above route for similar documentation
         request_data = request.get_json()
