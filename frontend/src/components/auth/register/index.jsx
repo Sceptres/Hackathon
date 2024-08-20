@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navigate, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/authContext";
 import { doCreateUserWithEmailAndPassword } from "../../../firebase/auth";
+import { insertUser } from "../../../api/api";
 
 const Register = () => {
 
@@ -21,19 +22,8 @@ const Register = () => {
   const { userLoggedIn } = useAuth();
 
   const addToLeaderBoard = async(userId) => {
-
     try {
-        const response = await fetch('http://127.0.0.1:8001/core/user/insert', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',             
-          },
-          body: JSON.stringify({
-            highscore: 0,
-            id: userId
-        }),
-        });
-        const data = await response.json();
+        const data = await insertUser(userId);
         console.log(data);
       } catch (error) {
         console.error('Error:', error);

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { auth } from '../../firebase/firebase'
-import { endGame, formatNumberToUSD } from '../../help/help'
+import { endGame } from '../../api/api'
+import { formatNumberToUSD } from '../../help/help'
 import avatar from '../../avatar.png'
 
 

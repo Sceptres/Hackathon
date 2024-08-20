@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { getDate, dateToStringFormat, formatNumberToUSD, getUserActiveGame, createUserGame } from '../../help/help';
+import { getLeaderboard, getUserActiveGame, createUserGame } from '../../api/api'
+import { getDate, dateToStringFormat, formatNumberToUSD } from '../../help/help';
 import avatar from '../../avatar.png'
 import './home.css'
 
@@ -76,22 +77,16 @@ const Home = () => {
     const [leaderboard, setLeaderboard] = useState([])
 
     useEffect(() => {
-        const getLeaderboard = async () => {
+        const getLeaderboardRequest = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8001/core/leaderboard/get', {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',             
-                    },
-                });
-                const data = await response.json();
+                const data = await getLeaderboard();
                 return data
             } catch(error) {
                 console.log('Unknown error')
             }
         }
 
-        const data = getLeaderboard();
+        const data = getLeaderboardRequest();
         data.then((arr) => {
             setLeaderboard(arr)
         })

@@ -11,6 +11,7 @@ import {
     Legend,
 } from 'chart.js';
 import { getDate, dateToStringFormat } from '../../help/help'
+import { getStockData } from '../../api/api';
 
 // Register the necessary chart components
 ChartJS.register(
@@ -91,18 +92,8 @@ class StockUI extends Component {
                 start_date: oldDate,
                 end_date: nowDate
             })
-            const response = await fetch('http://127.0.0.1:8001/external_api/get_stock_by_date', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ticker: this.props.ticker,
-                    start_date: oldDate,
-                    end_date: nowDate
-                }),
-            });
-            const data = await response.json();
+            
+            const data = await getStockData(this.props.ticker, oldDate, nowDate);
             if(data.length === 0) {
                 alert('No data for this stock at this time. Please choose another stock.')
             } else {

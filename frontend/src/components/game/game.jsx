@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { getDate, dateToStringFormat, formatNumberToUSD, getGamePortfilio, getUserActiveGame, updateGame } from '../../help/help'
+import { getDate, dateToStringFormat, formatNumberToUSD } from '../../help/help'
+import { getGamePortfilio, getUserActiveGame, updateGame } from '../../api/api'
 import StockUI from './stockUI'
 import { auth } from '../../firebase/firebase'
+import { getStockTicker } from '../../api/api'
 
 /**
  * 
@@ -149,17 +151,7 @@ const Game = () => {
         const value = searchTerm
 
         if (value) {
-            const response = await fetch('http://127.0.0.1:8001/external_api/get_stock_ticker', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    keyword: value
-
-                }),
-            })
-            const data = await response.json();
+            const data = await getStockTicker(value);
             setFilteredOptions(data);
             setShowDropdown(true);
         }
