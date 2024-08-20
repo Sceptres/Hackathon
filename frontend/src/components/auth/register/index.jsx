@@ -36,6 +36,7 @@ const Register = () => {
 
   const checkpasswordlength = (thePassword) => {
     if (thePassword.length < 6) {
+      console.log("password too short")
       navigate('/register');
       alert("Your password was less than 6 characters.");
       return false;
@@ -43,12 +44,22 @@ const Register = () => {
     return true;
   }
 
+  const checkConfirmedPassword = (passwordA,passwordB) => {
+    if(passwordA!=passwordB){
+        navigate('/register');
+        alert("password and confirmed password don't match");
+        return false;
+  }
+  return true;
+}
+
     const onSubmit = async (e) => {
         var usercredential = null
         e.preventDefault()
         if(!isRegistering) {
             const validLength = checkpasswordlength(password) 
-            if (validLength){
+            const checkconfirmed  = checkConfirmedPassword(password, confirmPassword)
+            if (validLength&&checkconfirmed){
             setIsRegistering(true)
             usercredential = await doCreateUserWithEmailAndPassword(email, password)
             }else{return}
