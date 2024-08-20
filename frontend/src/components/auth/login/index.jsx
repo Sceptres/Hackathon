@@ -4,6 +4,11 @@ import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../../fireb
 import { useAuth } from '../../../contexts/authContext'
 
 const Login = () => {
+
+    useEffect(() => {
+        document.title = "Login"
+    }, []);
+
     const { userLoggedIn } = useAuth()
 
     const [email, setEmail] = useState('')
