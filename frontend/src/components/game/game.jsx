@@ -237,7 +237,7 @@ const Game = () => {
         return <Navigate to={'/login'} replace={true} />;
     } else {
         return (
-            <div className="flex flex-col items-center justify-center bg-gray-100 min-h-screen">
+            <div className="flex flex-col items-center justify-center bg-gray-100">
                 <div className="text-2xl font-bold pt-14">
                     <button onClick={() => { navigate('/home') }}
                         className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 inline-block">
@@ -318,6 +318,18 @@ const Game = () => {
                         </button>
                         {isBuyPopupOpen && <Popup title={selectedOption} stockPrice={currentStockPrice} maxValue={Math.floor(portfolio && currentStockPrice && portfolio.balance/currentStockPrice)} startValue={0} buttonName={'Buy'} buttonClass={'bg-green-500 text-white rounded-lg hover:bg-green-600'} onClose={onBuyPopupClosed} toggleMethod={toggleBuyPopup} />}
                     </div>
+
+                    <div className="w-full max-w-4xl mt-4 overflow-y-auto" style={{ maxHeight: '200px' }}>
+                    <h2 className="text-lg font-semibold mb-2">Your Stocks</h2>
+                    <ul>
+                        {portfolio && portfolio.stocks && Object.entries(portfolio.stocks).map(([symbol, quantity]) => quantity > 0 && (
+                            <li key={symbol} className="flex justify-between border-b border-gray-300 py-2">
+                                <span>{symbol}</span>
+                                <span>{quantity} shares</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
                 </div>
             </div>
         );
