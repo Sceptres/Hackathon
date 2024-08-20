@@ -204,6 +204,16 @@ class DBConnection:
             games.append(doc_dict)
 
         return games
+    
+    def get_game(self, game_id: str):
+        doc_ref = self._db.collection(self.game_collection_name).document(game_id)
+        game = doc_ref.get()
+        if(game.exists):
+            game_data = game.to_dict()
+            game_data['id'] = doc_ref.id
+            return game_data
+        else:
+            return {}
 
     def get_user_active_game(self, user_id: str):
         doc_ref = self._db.collection(self.game_collection_name)
