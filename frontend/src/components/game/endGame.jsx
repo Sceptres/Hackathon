@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { auth } from '../../firebase/firebase'
@@ -8,6 +8,10 @@ import { endUserActiveGame } from '../../help/help'
 const EndGame = () => {
     const navigate = useNavigate();
     const {state} = useLocation();
+
+    useEffect(() => {
+        document.title = "Game Over!"
+    }, []);
 
     if(state) {
         const incoming = state.incoming;

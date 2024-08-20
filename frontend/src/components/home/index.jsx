@@ -55,6 +55,7 @@ const Home = () => {
     };
 
     useEffect(() => {
+        document.title = "Leaderboard | Home"
         const fetchData = async () => {
             try {
                 const data = await getUserActiveGame(currentUser.uid)
