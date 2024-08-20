@@ -8,10 +8,15 @@ import { endUserActiveGame } from '../../help/help'
 const EndGame = () => {
     const navigate = useNavigate();
     const {state} = useLocation();
-    const incoming = state.incoming;
 
-    if(!incoming || incoming !== 'ENDGAME') {
-        return <Navigate to={'/home'} replace={true} />
+    if(state) {
+        const incoming = state.incoming;
+
+        if(!incoming || incoming !== 'ENDGAME') {
+            return <Navigate to={'/home'} replace={true} />;
+        }
+    } else {
+        return <Navigate to={'/home'} replace={true} />;
     }
 
     const currentUser = auth.currentUser;
