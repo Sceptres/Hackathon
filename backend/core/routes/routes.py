@@ -1,6 +1,6 @@
 from core import core_blueprint, db_connection
 from db import Portfolio, User, Game, GameStatus
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from help import calculate_portfolio_networth
 
 @core_blueprint.route('/')
