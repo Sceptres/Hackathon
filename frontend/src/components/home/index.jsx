@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { auth } from "../../firebase/firebase";
 import { doSignOut } from '../../firebase/auth'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { getDate, dateToStringFormat, getUserActiveGame, createUserGame } from '../../help/help';
+import { getDate, dateToStringFormat, formatNumberToUSD, getUserActiveGame, createUserGame } from '../../help/help';
 import avatar from './avatar.png'
 import './home.css'
 
@@ -158,7 +158,7 @@ function LeaderboardItem(props) {
                 />
                 <span className="font-medium text-base text-gray-800">{props.displayName}</span>
             </div>
-            <span className="font-semibold text-lg text-gray-700">Highscore: ${props.highscore}</span>
+            <span className="font-semibold text-lg text-gray-700">Highscore: {formatNumberToUSD(props.highscore)}</span>
         </li>
     );
 }
