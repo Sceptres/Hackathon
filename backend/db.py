@@ -192,19 +192,6 @@ class DBConnection:
 
         return leaderboard
     
-    def get_user_games(self, user_id: str):
-        doc_ref = self._db.collection(self.game_collection_name)
-        query = doc_ref.where(filter = FieldFilter('userId', '==', user_id))
-        game_stream = query.stream()
-        
-        games = []
-        for doc in game_stream:
-            doc_dict = doc.to_dict()
-            doc_dict['id'] = doc.id
-            games.append(doc_dict)
-
-        return games
-    
     def get_game(self, game_id: str):
         doc_ref = self._db.collection(self.game_collection_name).document(game_id)
         game = doc_ref.get()
@@ -242,16 +229,3 @@ class DBConnection:
         else:
             portfolio = {}
         return portfolio
-    
-    def get_user_portfolios(self, user_id: str):
-        doc_ref = self._db.collection(self.portfolio_collection_name)
-        query = doc_ref.where(filter = FieldFilter('userId', '==', user_id))
-        portfilio_stream = query.stream()
-
-        portfolios = []
-        for doc in portfilio_stream:
-            doc_dict = doc.to_dict()
-            doc_dict['id'] = doc.id
-            portfolios.append(doc_dict)
-
-        return portfolios

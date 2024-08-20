@@ -96,22 +96,6 @@ def insert_portfolio():
         response.status_code = 500
         return response
     
-@core_blueprint.route('/user/update', methods=['POST'])
-def update_user():
-    try:
-        request_data = request.get_json()
-        user: User = User.from_dict(request_data)
-        updated_user = db_connection.update_user(user)
-
-        response = jsonify(updated_user)
-        response.status_code = 200
-
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
 @core_blueprint.route('/game/update', methods=['POST'])
 def update_game():
     try:
@@ -121,23 +105,6 @@ def update_game():
         updated_game = db_connection.update_game(game_id, game)
 
         response = jsonify(updated_game)
-        response.status_code = 200
-
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-        
-@core_blueprint.route('/portfolio/update', methods=['POST'])
-def update_portfolio():
-    try:
-        request_data = request.get_json()
-        portfolio_id = request_data['id']
-        portfolio: Portfolio = Portfolio.from_dict(request_data)
-        updated_portfolio = db_connection.update_portfolio(portfolio_id, portfolio)
-
-        response = jsonify(updated_portfolio)
         response.status_code = 200
 
         return response
@@ -174,21 +141,6 @@ def get_user():
         response = jsonify(str(e))
         response.status_code = 500
         return response
-    
-@core_blueprint.route('/user/game/get', methods=['POST'])
-def get_user_games():
-    try:
-        request_data = request.get_json()
-        user_id = request_data['userId']
-        games = db_connection.get_user_games(user_id)
-
-        response = jsonify(games)
-        response.status_code = 200
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
 
 @core_blueprint.route('/user/game/getActive', methods=['POST'])
 def get_user_active_game():
@@ -213,21 +165,6 @@ def get_game_portfolio():
         portfolio = db_connection.get_game_portfolio(game_id)
 
         response = jsonify(portfolio)
-        response.status_code = 200
-        return response
-    except Exception as e:
-        response = jsonify(str(e))
-        response.status_code = 500
-        return response
-    
-@core_blueprint.route('/user/portfolio/get', methods=['POST'])
-def get_user_portfolios():
-    try:
-        request_data = request.get_json()
-        user_id = request_data['userId']
-        portfolios = db_connection.get_user_portfolios(user_id)
-
-        response = jsonify(portfolios)
         response.status_code = 200
         return response
     except Exception as e:
