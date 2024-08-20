@@ -34,7 +34,7 @@ const Register = () => {
     if (thePassword.length < 6) {
       console.log("password too short")
       navigate('/register');
-      alert("Your password was less than 6 characters.");
+      setErrorMessage("Your password was less than 6 characters.");
       return false;
     }
     return true;
@@ -43,7 +43,7 @@ const Register = () => {
   const checkConfirmedPassword = (passwordA,passwordB) => {
     if(passwordA!=passwordB){
         navigate('/register');
-        alert("password and confirmed password don't match");
+        setErrorMessage("password and confirmed password don't match");
         return false;
   }
   return true;

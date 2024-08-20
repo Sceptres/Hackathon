@@ -27,7 +27,7 @@ const Login = () => {
             const success = await doSignInWithEmailAndPassword(email, password)
              if (!success){
                  navigate('/login');
-                 alert("your email or password do not match");
+                 setErrorMessage("your email or password do not match");
             }
             else{
                 setIsSigningIn(true)
