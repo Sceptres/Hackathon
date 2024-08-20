@@ -5,6 +5,7 @@ import { getGamePortfilio, getUserActiveGame, updateGame } from '../../api/api'
 import StockUI from './stockUI'
 import { auth } from '../../firebase/firebase'
 import { getStockTicker } from '../../api/api'
+import { Timestamp } from 'firebase/firestore'
 
 /**
  * 
@@ -171,7 +172,13 @@ const Game = () => {
             return;
         }
 
-        if(chosenDate < currentDate) {
+        const todayStr = dateToStringFormat(new Date());
+        const today = getDate(todayStr);
+        console.log(today);
+
+        if(chosenDate > today) {
+            alert(`You cannot choose a date after ${todayStr}`);
+        } else if(chosenDate < currentDate) {
             alert("You can only go forward in time")
         } else if(chosenDate.getDay() == 6) { // Is the day of the week a Saturday?
             chosenDate.setDate(chosenDate.getDate() - 1);
