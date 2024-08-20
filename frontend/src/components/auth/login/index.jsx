@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../../firebase/auth'
 import { useAuth } from '../../../contexts/authContext'
 
@@ -11,14 +11,25 @@ const Login = () => {
     const [isSigningIn, setIsSigningIn] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
 
+
+    const navigate = useNavigate();
+  
+
     const onSubmit = async (e) => {
         e.preventDefault()
         if(!isSigningIn) {
-            setIsSigningIn(true)
-            await doSignInWithEmailAndPassword(email, password)
+            const success = await doSignInWithEmailAndPassword(email, password)
+             if (!success){
+                 navigate('/login');
+                 alert("your email or password do not match");
+            }
+            else{
+                setIsSigningIn(true)
+            }
             // doSendEmailVerification()
         }
-    }
+    }    
+    
 
     const addToLeaderBoard = async(userId) => {
         console.log(userId)
@@ -160,4 +171,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Login;
