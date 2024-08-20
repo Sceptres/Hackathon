@@ -1,10 +1,45 @@
 from core import core_blueprint, db_connection
-from db import Portfolio, User, Game
+from db import Portfolio, User, Game, GameStatus
 from flask import jsonify, request
+from help import calculate_portfolio_networth
 
 @core_blueprint.route('/')
 def index():
     return "Server is Alive"
+
+####################################################################
+#######################GAME LOGIC API ENDPOINTS#####################
+####################################################################
+@core_blueprint.route('/game/end', methods=['POST'])
+async def end_game():
+    try:
+        request_data = request.get_json()
+        user_id = request_data['userId']
+
+        user = db_connection.get_user(user_id=user_id)
+        game = db_connection.get_user_active_game(user_id=user_id)
+        portfolio = db_connection.get_game_portfolio(game['id'])
+
+        # Update game
+        game['status'] = GameStatus.COMPLETE.name        
+        game_score = await calculate_portfolio_networth(game['currentDate'], portfolio['balance'], portfolio['stocks'])
+        game['score'] = game_score
+
+        # Did the user reach a new highscore?
+        if game['score'] > user['highscore']:
+            user['highscore'] = game['score']
+
+        db_connection.update_game(game['id'], Game.from_dict(game))
+        db_connection.update_user(User.from_dict(user))
+
+        response = jsonify(portfolio)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        response = jsonify(str(e))
+        response.status_code = 500
+        return response
+
 
 ####################################################################
 #######################DATABASE API ENDPOINTS#######################
@@ -56,7 +91,7 @@ def insert_portfolio():
         response.status_code = 500
         return response
     
-@core_blueprint.route('user/update', methods=['POST'])
+@core_blueprint.route('/user/update', methods=['POST'])
 def update_user():
     try:
         request_data = request.get_json()
@@ -72,7 +107,7 @@ def update_user():
         response.status_code = 500
         return response
     
-@core_blueprint.route('game/update', methods=['POST'])
+@core_blueprint.route('/game/update', methods=['POST'])
 def update_game():
     try:
         request_data = request.get_json()
