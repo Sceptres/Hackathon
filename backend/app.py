@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
 
     #Registering routes
-    app.register_blueprint(core_blueprint,url_prefix="/core")
+    app.register_blueprint(core_blueprint,url_prefix="/api")
     app.register_blueprint(external_api_blueprint,url_prefix="/external_api")
     app.register_blueprint(transactions_blueprint,url_prefix="/transaction")
 
