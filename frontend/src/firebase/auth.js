@@ -10,11 +10,23 @@ import {
 } from "firebase/auth";
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
+
   return createUserWithEmailAndPassword(auth, email, password);
+
 };
 
-export const doSignInWithEmailAndPassword = (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password);
+export const doSignInWithEmailAndPassword = async (email, password) => {
+  console.log("reached1")
+  try {
+    console.log("reached2")
+  await signInWithEmailAndPassword(auth, email, password);
+  console.log("reached4")
+  return true;
+}catch (error){
+  console.log("reached3")
+  console.log("reached here")
+  return false;
+}
 };
 
 export const doSignInWithGoogle = async () => {
