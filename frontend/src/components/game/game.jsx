@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { getDate, dateToStringFormat, formatNumberToUSD } from '../../help/help'
+import { getDate, dateToStringFormat, formatNumberToUSD, apiUrl } from '../../help/help'
 import { getGamePortfilio, getUserActiveGame, updateGame } from '../../api/api'
 import StockUI from './stockUI'
 import { auth } from '../../firebase/firebase'
@@ -66,7 +66,7 @@ const Popup = (props) => {
  * @returns The updated portfolio of the given game after the buy transaction
  */
 async function buyStock(ticker, quantity, date, gameId) {
-    const response = await fetch('http://127.0.0.1:8001/transaction/buy', {
+    const response = await fetch(apiUrl('/transaction/buy'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ async function buyStock(ticker, quantity, date, gameId) {
  * @returns The updated portfolio of the given game after the sell transaction
  */
 async function sellStock(ticker, quantity, date, gameId) {
-    const response = await fetch('http://127.0.0.1:8001/transaction/sell', {
+    const response = await fetch(apiUrl('/transaction/sell'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -34,3 +34,13 @@ export function formatNumberToUSD(money) {
     });
     return USDollar.format(money);
 }
+
+/**
+ * 
+ * @param {string} endpoint The endpoint to append to the end of the API url
+ * @returns The endpoint appended to the API url
+ */
+export function apiUrl(endpoint) {
+    const urlStr = process.env.REACT_APP_API_URL;
+    return urlStr + endpoint;
+}

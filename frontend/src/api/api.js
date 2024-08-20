@@ -1,11 +1,14 @@
 /************************DATABASE API CALLS************************/
+
+import { apiUrl } from "../help/help";
+
 /**
  * 
  * @param {string} userId The id of the user to get from the database
  * @returns The user object with the users id and highscore
  */
 export async function getUser(userId) {
-    const response = await fetch('http://127.0.0.1:8001/api/user/get', {
+    const response = await fetch(apiUrl('/api/user/get'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',             
@@ -24,7 +27,7 @@ export async function getUser(userId) {
  * @returns The user object that was inserted into the database
  */
 export async function insertUser(userId) {
-    const response = await fetch('http://127.0.0.1:8001/api/user/insert', {
+    const response = await fetch(apiUrl('/api/user/insert'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -43,7 +46,7 @@ export async function insertUser(userId) {
  * @returns A list representing the 10 users on the leaderboard
  */
 export async function getLeaderboard() {
-    const response = await fetch('http://127.0.0.1:8001/api/leaderboard/get', {
+    const response = await fetch(apiUrl('/api/leaderboard/get'), {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',             
@@ -59,7 +62,7 @@ export async function getLeaderboard() {
  * @returns The portfolio of the game given the id
  */
 export async function getGamePortfilio(gameId) {
-    const response = await fetch('http://127.0.0.1:8001/api/game/portfolio/get', {
+    const response = await fetch(apiUrl('/api/game/portfolio/get'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -78,7 +81,7 @@ export async function getGamePortfilio(gameId) {
  * @returns The active game of the user. Returns a empty object if there is no active game.
  */
 export async function getUserActiveGame(userId) {
-    const response = await fetch('http://127.0.0.1:8001/api/user/game/getActive', {
+    const response = await fetch(apiUrl('/api/user/game/getActive'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -99,7 +102,7 @@ export async function getUserActiveGame(userId) {
  * @returns The new portfolio object
  */
 export async function createGamePortfolio(userId, gameId, balance) {
-    const response = await fetch('http://127.0.0.1:8001/api/portfolio/insert', {
+    const response = await fetch(apiUrl('/api/portfolio/insert'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -123,7 +126,7 @@ export async function createGamePortfolio(userId, gameId, balance) {
  * @returns The created game
  */
 export async function createUserGame(userId, startDate) {
-    const response = await fetch('http://127.0.0.1:8001/api/game/insert', {
+    const response = await fetch(apiUrl('/api/game/insert'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +155,7 @@ export async function createUserGame(userId, startDate) {
  * @returns The updated game
 */
 export async function updateGame(gameId, userId, currentDate, score, status) {
-    const response = await fetch('http://127.0.0.1:8001/api/game/update', {
+    const response = await fetch(apiUrl('/api/game/update'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -175,7 +178,7 @@ export async function updateGame(gameId, userId, currentDate, score, status) {
  * @returns The portfolio with the users stats for that game
  */
 export async function endGame(gameId) {
-    const response = await fetch('http://127.0.0.1:8001/api/game/end', {
+    const response = await fetch(apiUrl('/api/game/end'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -195,7 +198,7 @@ export async function endGame(gameId) {
  * @returns List of possible stock tickers that match the given search string
  */
 export async function getStockTicker(search) {
-    const response = await fetch('http://127.0.0.1:8001/external_api/get_stock_ticker', {
+    const response = await fetch(apiUrl('/external_api/get_stock_ticker'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -217,7 +220,7 @@ export async function getStockTicker(search) {
  * @returns A list of objects containing the prices of the stock during each day in the given date range
  */
 export async function getStockData(ticker, startDate, endDate) {
-    const response = await fetch('http://127.0.0.1:8001/external_api/get_stock_by_date', {
+    const response = await fetch(apiUrl('/external_api/get_stock_by_date'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
