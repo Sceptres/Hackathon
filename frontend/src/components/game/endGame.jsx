@@ -1,13 +1,22 @@
 import React from 'react'
 import { useAuth } from '../../contexts/authContext'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { auth } from '../../firebase/firebase'
+import { endUserActiveGame } from '../../help/help'
 
 
 const EndGame = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const {state} = useLocation();
+    const incoming = state.incoming;
+
+    if(!incoming || incoming !== 'ENDGAME') {
+        return <Navigate to={'/home'} replace={true} />
+    }
 
     const currentUser = auth.currentUser;
+
+    endUserActiveGame(currentUser.uid);
 
     if(!currentUser) {
         return <Navigate to={'/login'} replace={true} />;
