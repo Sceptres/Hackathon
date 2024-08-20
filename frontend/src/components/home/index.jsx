@@ -18,7 +18,45 @@ const Home = () => {
         });
     };
 
-    const [isRunningGame, setIsRunningGame] = useState(null); // To store fetched data
+    useEffect(() => {
+        document.title = "Leaderboard | Home"
+    } , []);
+
+    const [isRunningGame, setIsRunningGame] = useState(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getUserActiveGame(currentUser.uid)
+                
+                if(Object.keys(data).length === 0){
+                    setIsRunningGame(false)
+                } else{
+                    setIsRunningGame(true)
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+      
+        fetchData();
+        return null;
+    }); // To store fetched data
+
+    const [leaderboard, setLeaderboard] = useState(() => {
+        const getLeaderboardRequest = async () => {
+            try {
+                const data = await getLeaderboard();
+                return data
+            } catch(error) {
+                console.log('Unknown error')
+            }
+        }
+
+        const data = getLeaderboardRequest();
+        data.then((arr) => {
+            setLeaderboard(arr)
+        })
+        return [];
+    })
 
     let startDate = getDate("2005-10-10");
     startDate = dateToStringFormat(startDate);
@@ -54,43 +92,6 @@ const Home = () => {
             console.error('Error:', error);
         }   
     };
-
-    useEffect(() => {
-        document.title = "Leaderboard | Home"
-        const fetchData = async () => {
-            try {
-                const data = await getUserActiveGame(currentUser.uid)
-                
-                if(Object.keys(data).length === 0){
-                    setIsRunningGame(false)
-                } else{
-                    setIsRunningGame(true)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-      
-        fetchData();
-    } , []);
-
-    const [leaderboard, setLeaderboard] = useState([])
-
-    useEffect(() => {
-        const getLeaderboardRequest = async () => {
-            try {
-                const data = await getLeaderboard();
-                return data
-            } catch(error) {
-                console.log('Unknown error')
-            }
-        }
-
-        const data = getLeaderboardRequest();
-        data.then((arr) => {
-            setLeaderboard(arr)
-        })
-    }, [])
 
     if(!currentUser) {
         return <Navigate to={'/login'} replace={true} />;
