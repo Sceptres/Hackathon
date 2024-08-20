@@ -1,10 +1,50 @@
 from core import core_blueprint, db_connection
-from db import Portfolio, User, Game
+from db import Portfolio, User, Game, GameStatus
 from flask import jsonify, request
+from help import calculate_portfolio_networth
 
 @core_blueprint.route('/')
 def index():
     return "Server is Alive"
+
+####################################################################
+#######################GAME LOGIC API ENDPOINTS#####################
+####################################################################
+@core_blueprint.route('/game/end', methods=['POST'])
+async def end_game():
+    try:
+        request_data = request.get_json()
+        game_id = request_data['gameId']
+
+        game = db_connection.get_game(game_id=game_id)
+        user = db_connection.get_user(user_id=game['userId'])
+        portfolio = db_connection.get_game_portfolio(game['id'])
+
+        # Update game
+        game['status'] = GameStatus.COMPLETE.name        
+        game_score = await calculate_portfolio_networth(game['currentDate'], portfolio['balance'], portfolio['stocks'])
+        game['score'] = game_score
+
+        # Did the user reach a new highscore?
+        if game['score'] > user['highscore']:
+            user['highscore'] = game['score']
+            portfolio['achievedNewHighScore'] = True
+        else:
+            portfolio['achievedNewHighScore'] = False
+
+        db_connection.update_game(game['id'], Game.from_dict(game))
+        db_connection.update_user(User.from_dict(user))
+
+        portfolio['score'] = game['score']
+
+        response = jsonify(portfolio)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        response = jsonify(str(e))
+        response.status_code = 500
+        return response
+
 
 ####################################################################
 #######################DATABASE API ENDPOINTS#######################
@@ -56,7 +96,7 @@ def insert_portfolio():
         response.status_code = 500
         return response
     
-@core_blueprint.route('user/update', methods=['POST'])
+@core_blueprint.route('/user/update', methods=['POST'])
 def update_user():
     try:
         request_data = request.get_json()
@@ -72,7 +112,7 @@ def update_user():
         response.status_code = 500
         return response
     
-@core_blueprint.route('game/update', methods=['POST'])
+@core_blueprint.route('/game/update', methods=['POST'])
 def update_game():
     try:
         request_data = request.get_json()
@@ -151,11 +191,11 @@ def get_user_games():
         return response
 
 @core_blueprint.route('/user/game/getActive', methods=['POST'])
-def get_user_active_games():
+def get_user_active_game():
     try:
         request_data = request.get_json()
         user_id = request_data['userId']
-        games = db_connection.get_user_active_games(user_id)
+        games = db_connection.get_user_active_game(user_id)
 
         response = jsonify(games)
         response.status_code = 200

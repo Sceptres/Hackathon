@@ -10,7 +10,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { getDate, dateToStringFormat } from '../../help'
+import { getDate, dateToStringFormat } from '../../help/help'
 
 // Register the necessary chart components
 ChartJS.register(
@@ -64,18 +64,13 @@ class StockUI extends Component {
             },
         };
     }
-    componentDidMount() {
-        this.fetch_stock_data()
-
-    }
     componentDidUpdate(prevProps) {
         //if either props change then recompute
         if (prevProps.ticker !== this.props.ticker) {
-          
                 this.fetch_stock_data()
-            
         }
-        if (prevProps.currentDate !== this.props.currentDate) {
+        
+        if (prevProps.currentDate && prevProps.currentDate !== this.props.currentDate) {
             this.fetch_stock_data()
         }
     }
@@ -108,7 +103,12 @@ class StockUI extends Component {
                 }),
             });
             const data = await response.json();
-            this.updateChartData(data);
+            if(data.length === 0) {
+                alert('No data for this stock at this time. Please choose another stock.')
+            } else {
+                this.props.stockPriceUpdater(data[data.length-1].price); // Update the current stock price
+                this.updateChartData(data);   
+            }
         } catch (error) {
             console.error('Error:', error);
         }

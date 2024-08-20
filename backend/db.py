@@ -204,19 +204,31 @@ class DBConnection:
             games.append(doc_dict)
 
         return games
+    
+    def get_game(self, game_id: str):
+        doc_ref = self._db.collection(self.game_collection_name).document(game_id)
+        game = doc_ref.get()
+        if(game.exists):
+            game_data = game.to_dict()
+            game_data['id'] = doc_ref.id
+            return game_data
+        else:
+            return {}
 
-    def get_user_active_games(self, user_id: str):
+    def get_user_active_game(self, user_id: str):
         doc_ref = self._db.collection(self.game_collection_name)
         query = doc_ref.where(filter=FieldFilter('userId', '==', user_id)).where(filter=FieldFilter('status', '==', 'ACTIVE'))
-        game_stream = query.stream()
+        games = query.get()
         
-        games = []
-        for doc in game_stream:
-            doc_dict = doc.to_dict()
-            doc_dict['id'] = doc.id
-            games.append(doc_dict)
+        if len(games) != 0:
+            doc = games[0]
+            game = doc.to_dict()
+            game['id'] = doc.id
+        else:
+            game = {}
 
-        return games    
+
+        return game
     
     def get_game_portfolio(self, game_id: str):
         doc_ref = self._db.collection(self.portfolio_collection_name)
