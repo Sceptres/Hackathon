@@ -127,6 +127,7 @@ const Game = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
+        document.title = "Game"
         const gameObj = getUserActiveGame(currentUser.uid);
         gameObj.then((data) => {
             setGame(data);

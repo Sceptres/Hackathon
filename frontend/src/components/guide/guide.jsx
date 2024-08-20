@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
@@ -8,6 +8,10 @@ import { auth } from '../../firebase/firebase'
 const Guide = () => {
     const navigate = useNavigate()
     const currentUser = auth.currentUser;
+
+    useEffect(() => {
+        document.title = "Guide"
+    }, []);
 
     if(!currentUser) {
         return <Navigate to={'login'} replace={true} />;

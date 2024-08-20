@@ -17,12 +17,12 @@ function StatComponent(props) {
 const EndGame = () => {
     const navigate = useNavigate();
     const {state} = useLocation();
-
     const [portfolio, setPortfolio] = useState()
 
     const currentUser = auth.currentUser;
 
     useEffect(() => {
+        document.title = "Game Over!"
         if(state) {
             const gameId = state.gameId;
     
