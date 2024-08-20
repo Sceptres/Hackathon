@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/authContext'
-import { Navigate, useLocation } from 'react-router-dom'
-import avatar from '../../avatar.png'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { auth } from '../../firebase/firebase'
+import { endUserActiveGame } from '../../help/help'
+import avatar from './avatar.png'
 
 
 function StatComponent(props) {
@@ -14,37 +16,31 @@ function StatComponent(props) {
 }
 
 const EndGame = () => {
-    const { userLoggedIn } = useAuth();
+    const navigate = useNavigate();
+    const {state} = useLocation();
 
-    const getGamePortfolio = async (gameId) => {
-        try {
-            const response = fetch('http://127.0.0.1:8001/core/game/portfolio/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',             
-                },
-                body: JSON.stringify({
-                    gameId: gameId
-                })
-            });
-            const data = await response.json();
-            return data;
-        } catch(error) {
-            console.log(error)
+    const [portfolio, setPortfolio] = useState()
+
+    if(state) {
+        const incoming = state.incoming;
+
+        if(!incoming || incoming !== 'ENDGAME') {
+            return <Navigate to={'/home'} replace={true} />;
         }
+    } else {
+        return <Navigate to={'/home'} replace={true} />;
     }
 
-    const {gameId} = useLocation(); 
-    const [portfolio, setPortfolio] = useState(() => {
-        const portfolioDataRequest = getGamePortfolio(gameId);
-        portfolioDataRequest.then((portfolioData) => setPortfolio(portfolioData));
-        return []
-    })
+    const currentUser = auth.currentUser;
 
-    if(!userLoggedIn) {
-        return (
-            <Navigate to={'/login'} replace={true} />
-        );
+    useEffect(() => {
+        const portfolioDataRequest = endUserActiveGame(currentUser.uid);
+        portfolioDataRequest.then((portfolioData) => setPortfolio(portfolioData));
+    }, [])
+    
+
+    if(!currentUser) {
+        return <Navigate to={'/login'} replace={true} />;
     } else {
         return (
             <div className="bg-white w-ful h-full">
@@ -64,9 +60,8 @@ const EndGame = () => {
                     <StatComponent title='Portfolio Stock Diversity' stat={Object.keys(portfolio.stocks).length} />
                 </div>
             </div>
-            
         );
-    }
+    }   
 }
 
 export default EndGame

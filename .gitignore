@@ -24,3 +24,6 @@
 
 /backend/key.json
 __pycache__/
+
+# firebaseConfig
+/frontend/src/firebaseConfig.json

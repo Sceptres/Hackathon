@@ -1,5 +1,7 @@
 from core import external_api_blueprint
 from flask import jsonify, request
+from datetime import datetime
+import datetime as dt
 
 from ..external_api.factory.api_service_factory import APIServiceFactory
 
@@ -32,6 +34,10 @@ async def get_stock_by_date():
         start_date = request_data['start_date']
         end_date = request_data['end_date']
         ticker = request_data['ticker']
+
+        date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+        date_obj += dt.timedelta(days=1)
+        end_date = date_obj.strftime("%Y-%m-%d")
     
         stock_api = APIServiceFactory.create_api_client(ApiTypes.Stock)
         data = await stock_api.get_stock_by_date(start_date,end_date,ticker)

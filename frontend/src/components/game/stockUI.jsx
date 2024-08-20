@@ -10,6 +10,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { getDate, dateToStringFormat } from '../../help/help'
 
 // Register the necessary chart components
 ChartJS.register(
@@ -63,54 +64,32 @@ class StockUI extends Component {
             },
         };
     }
-    componentDidMount() {
-        this.fetch_stock_data()
-
-    }
     componentDidUpdate(prevProps) {
         //if either props change then recompute
         if (prevProps.ticker !== this.props.ticker) {
-          
                 this.fetch_stock_data()
-            
         }
-        if (prevProps.date !== this.props.date) {
-            if(this.props.date >prevProps.date ){
+        
+        if (prevProps.currentDate && prevProps.currentDate !== this.props.currentDate) {
             this.fetch_stock_data()
-            }else{
-                alert("You can only go forward in Time")
-            }
         }
     }
     fetch_stock_data = async () => {
         try {
-            let startDate = this.props.date
-            let newDate = this.props.defaultDate // setting to 2010 as start date
+            // Represents the current date chosen by the user
+            let currentDate = this.props.currentDate;
+            let nowDate = dateToStringFormat(getDate(currentDate));
+            
+            // Represents the date in the past to which we are showing data
+            let oldDate = getDate(currentDate);
+            oldDate.setMonth(oldDate.getMonth() - 1);
+            oldDate = dateToStringFormat(oldDate);
 
-            if (!startDate) {
-                startDate = new Date()
-                const year = startDate.getFullYear();
-                const month = String(startDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-                const day = String(startDate.getDate()).padStart(2, '0');
-
-                startDate = `${year}-${month}-${day}`;
-            } else {
-
-                newDate = new Date(this.props.date);
-                newDate.setMonth(newDate.getMonth() - 1);
-                const year = newDate.getFullYear();
-                const month = String(newDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-                const day = String(newDate.getDate()).padStart(2, '0');
-
-                newDate = `${year}-${month}-${day}`;
-
-            }
             console.log("New Stock Input")
             console.log({
                 ticker: this.props.ticker,
-                start_date: startDate,
-                end_date: newDate
-
+                start_date: oldDate,
+                end_date: nowDate
             })
             const response = await fetch('http://127.0.0.1:8001/external_api/get_stock_by_date', {
                 method: 'POST',
@@ -119,13 +98,17 @@ class StockUI extends Component {
                 },
                 body: JSON.stringify({
                     ticker: this.props.ticker,
-                    start_date: newDate,
-                    end_date: startDate
-
+                    start_date: oldDate,
+                    end_date: nowDate
                 }),
             });
             const data = await response.json();
-            this.updateChartData(data);
+            if(data.length === 0) {
+                alert('No data for this stock at this time. Please choose another stock.')
+            } else {
+                this.props.stockPriceUpdater(data[data.length-1].price); // Update the current stock price
+                this.updateChartData(data);   
+            }
         } catch (error) {
             console.error('Error:', error);
         }
