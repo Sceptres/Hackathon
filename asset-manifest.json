@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/hackathon/frontend/static/css/main.7534d0c4.css",
-    "main.js": "/hackathon/frontend/static/js/main.f0f40e64.js",
-    "static/js/453.8ab44547.chunk.js": "/hackathon/frontend/static/js/453.8ab44547.chunk.js",
-    "static/media/avatar.png": "/hackathon/frontend/static/media/avatar.4cdfcfadf137bef0318c.png",
-    "index.html": "/hackathon/frontend/index.html",
-    "main.7534d0c4.css.map": "/hackathon/frontend/static/css/main.7534d0c4.css.map",
-    "main.f0f40e64.js.map": "/hackathon/frontend/static/js/main.f0f40e64.js.map",
-    "453.8ab44547.chunk.js.map": "/hackathon/frontend/static/js/453.8ab44547.chunk.js.map"
+    "main.css": "/Hackathon/static/css/main.7534d0c4.css",
+    "main.js": "/Hackathon/static/js/main.5fe8d9b0.js",
+    "static/js/453.8ab44547.chunk.js": "/Hackathon/static/js/453.8ab44547.chunk.js",
+    "static/media/avatar.png": "/Hackathon/static/media/avatar.4cdfcfadf137bef0318c.png",
+    "index.html": "/Hackathon/index.html",
+    "main.7534d0c4.css.map": "/Hackathon/static/css/main.7534d0c4.css.map",
+    "main.5fe8d9b0.js.map": "/Hackathon/static/js/main.5fe8d9b0.js.map",
+    "453.8ab44547.chunk.js.map": "/Hackathon/static/js/453.8ab44547.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7534d0c4.css",
-    "static/js/main.f0f40e64.js"
+    "static/js/main.5fe8d9b0.js"
   ]
 }
