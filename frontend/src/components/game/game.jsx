@@ -301,8 +301,8 @@ const Game = () => {
                         </button>
                     </form>
     
-                    <div className="flex-grow w-full max-w-6xl mt-4 flex items-center justify-center" style={{ maxHeight: 'calc(100vh - 20rem)' }}>
-                        <div className="w-full">
+                    <div className="flex-grow w-full max-w-6xl mt-4 flex items-center justify-center" style={{ maxHeight: 'calc(100vh - 20rem)', minHeight: '30rem' }}>
+                        <div className="w-full h-full flex-grow">
                             <StockUI ticker={selectedOption} currentDate={seletedDate} stockPriceUpdater={setCurrentStockPrice} />
                         </div>
                     </div>
